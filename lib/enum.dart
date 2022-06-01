@@ -1,0 +1,1 @@
+enum TypeSourceMusic { local, network}
