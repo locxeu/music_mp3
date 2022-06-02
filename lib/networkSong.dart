@@ -8,24 +8,24 @@ import 'package:music_mp3_app/allSong.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/controlButton.dart';
 import 'package:music_mp3_app/database/chillies.dart';
+import 'package:music_mp3_app/database/quai_vat_ti_hon.dart';
 import 'package:music_mp3_app/enum.dart';
+import 'package:music_mp3_app/instance/instance.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NetworkSong extends StatefulWidget {
-  final TypeSourceMusic typeSourceMusic;
-  const NetworkSong({Key? key,required this.typeSourceMusic}) : super(key: key);
+  final List<AudioSource> listAudio;
+  const NetworkSong({Key? key,required this.listAudio}) : super(key: key);
 
   @override
   NetworkSongState createState() => NetworkSongState();
 }
 
 class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
-  late AudioPlayer _player;
-  final _playlist = ConcatenatingAudioSource(
-    children: [
-      for (var i = 0; i < chilliesSongList.length; i++) chilliesSongList[i]
-    ],
-  );
+  // late AudioPlayer Instances.player;
+    var _playlist = null;
+
+  // final _playlist =
   // Remove this audio source from the Windows and Linux version because it's not supported yet
   // if (kIsWeb ||
   //     ![TargetPlatform.windows, TargetPlatform.linux]
@@ -75,24 +75,32 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     ambiguate(WidgetsBinding.instance)!.addObserver(this);
-    _player = AudioPlayer();
+    // Instances.player = Instances.player;
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
     _init();
   }
+  // Future<void> loadNetworkSource async(){
+         
+  // }
 
   Future<void> _init() async {
+    _playlist= ConcatenatingAudioSource(
+    children: [
+      for (var i = 0; i < widget.listAudio.length; i++) widget.listAudio[i]
+    ],
+  );
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
     // Listen to errors during playback.
-    _player.playbackEventStream.listen((event) {},
+    Instances.player.playbackEventStream.listen((event) {},
         onError: (Object e, StackTrace stackTrace) {
       print('A stream error occurred: $e');
     });
     try {
       // Preloading audio is not currently supported on Linux.
-      await _player.setAudioSource(_playlist,
+      await Instances.player.setAudioSource(_playlist,
           preload: kIsWeb || defaultTargetPlatform != TargetPlatform.linux);
     } catch (e) {
       // Catch load errors: 404, invalid url...
@@ -103,7 +111,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
   @override
   void dispose() {
     ambiguate(WidgetsBinding.instance)!.removeObserver(this);
-    _player.dispose();
+    // Instances.player.dispose();
     super.dispose();
   }
 
@@ -113,15 +121,15 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
       // Release the player's resources when not in use. We use "stop" so that
       // if the app resumes later, it will still remember what position to
       // resume from.
-      _player.stop();
+      Instances.player.stop();
     }
   }
 
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-          _player.positionStream,
-          _player.bufferedPositionStream,
-          _player.durationStream,
+          Instances.player.positionStream,
+          Instances.player.bufferedPositionStream,
+          Instances.player.durationStream,
           (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
 
@@ -135,17 +143,18 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AllSong()),
-                    );
-                  },
-                  child: Text('to local',style: TextStyle(fontSize: 20),)),
+              IconButton(onPressed: (){Navigator.of(context).pop();}, icon: Icon(Icons.arrow_back_ios_new)),
+              // InkWell(
+              //     onTap: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(builder: (context) => AllSong()),
+              //       );
+              //     },
+              //     child: Text('to local',style: TextStyle(fontSize: 20),)),
               Expanded(
                 child: StreamBuilder<SequenceState?>(
-                  stream: _player.sequenceStateStream,
+                  stream: Instances.player.sequenceStateStream,
                   builder: (context, snapshot) {
                     final state = snapshot.data;
                     if (state?.sequence.isEmpty ?? true) {
@@ -170,7 +179,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                   },
                 ),
               ),
-              ControlButtons(_player),
+              ControlButtons(Instances.player),
               StreamBuilder<PositionData>(
                 stream: _positionDataStream,
                 builder: (context, snapshot) {
@@ -181,7 +190,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                     bufferedPosition:
                         positionData?.bufferedPosition ?? Duration.zero,
                     onChangeEnd: (newPosition) {
-                      _player.seek(newPosition);
+                      Instances.player.seek(newPosition);
                     },
                   );
                 },
@@ -190,7 +199,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
               Row(
                 children: [
                   StreamBuilder<LoopMode>(
-                    stream: _player.loopModeStream,
+                    stream: Instances.player.loopModeStream,
                     builder: (context, snapshot) {
                       final loopMode = snapshot.data ?? LoopMode.off;
                       const icons = [
@@ -207,7 +216,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                       return IconButton(
                         icon: icons[index],
                         onPressed: () {
-                          _player.setLoopMode(cycleModes[
+                          Instances.player.setLoopMode(cycleModes[
                               (cycleModes.indexOf(loopMode) + 1) %
                                   cycleModes.length]);
                         },
@@ -222,7 +231,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                     ),
                   ),
                   StreamBuilder<bool>(
-                    stream: _player.shuffleModeEnabledStream,
+                    stream: Instances.player.shuffleModeEnabledStream,
                     builder: (context, snapshot) {
                       final shuffleModeEnabled = snapshot.data ?? false;
                       return IconButton(
@@ -232,9 +241,9 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                         onPressed: () async {
                           final enable = !shuffleModeEnabled;
                           if (enable) {
-                            await _player.shuffle();
+                            await Instances.player.shuffle();
                           }
-                          await _player.setShuffleModeEnabled(enable);
+                          await Instances.player.setShuffleModeEnabled(enable);
                         },
                       );
                     },
@@ -244,7 +253,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
               SizedBox(
                 height: 240.0,
                 child: StreamBuilder<SequenceState?>(
-                  stream: _player.sequenceStateStream,
+                  stream: Instances.player.sequenceStateStream,
                   builder: (context, snapshot) {
                     final state = snapshot.data;
                     final sequence = state?.sequence ?? [];
@@ -275,7 +284,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                               child: ListTile(
                                 title: Text(sequence[i].tag.title as String),
                                 onTap: () {
-                                  _player.seek(Duration.zero, index: i);
+                                  Instances.player.seek(Duration.zero, index: i);
                                 },
                               ),
                             ),

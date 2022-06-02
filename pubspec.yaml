@@ -40,6 +40,8 @@ dependencies:
   audio_service: ^0.18.4
   audio_session: ^0.1.6+1
   rxdart: ^0.27.2
+  flutter_svg: ^1.0.3
+  google_fonts: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +68,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/charts/
+    - assets/images/favorite_artist/
+    - assets/images/types/
+    - assets/images/relax/
+    - assets/images/bottom_bar/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
