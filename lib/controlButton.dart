@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_mp3_app/common.dart';
+import 'package:music_mp3_app/config/theme/app_theme.dart';
 
 class ControlButtons extends StatelessWidget {
   final AudioPlayer player;
@@ -13,7 +14,7 @@ class ControlButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: const Icon(Icons.volume_up),
+          icon:  Icon(Icons.volume_up,color: AppTheme.backgroundColor,),
           onPressed: () {
             showSliderDialog(
               context: context,
@@ -30,7 +31,7 @@ class ControlButtons extends StatelessWidget {
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
           builder: (context, snapshot) => IconButton(
-            icon: const Icon(Icons.skip_previous),
+            icon:  Icon(Icons.skip_previous,color: AppTheme.backgroundColor),
             onPressed: player.hasPrevious ? player.seekToPrevious : null,
           ),
         ),
@@ -50,19 +51,19 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon: const Icon(Icons.play_arrow),
+                icon:  Icon(Icons.play_arrow,color: AppTheme.backgroundColor),
                 iconSize: 64.0,
                 onPressed: player.play,
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon: const Icon(Icons.pause),
+                icon:  Icon(Icons.pause,color: AppTheme.backgroundColor),
                 iconSize: 64.0,
                 onPressed: player.pause,
               );
             } else {
               return IconButton(
-                icon: const Icon(Icons.replay),
+                icon:  Icon(Icons.replay,color: AppTheme.backgroundColor),
                 iconSize: 64.0,
                 onPressed: () => player.seek(Duration.zero,
                     index: player.effectiveIndices!.first),
@@ -73,7 +74,7 @@ class ControlButtons extends StatelessWidget {
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
           builder: (context, snapshot) => IconButton(
-            icon: const Icon(Icons.skip_next),
+            icon:  Icon(Icons.skip_next,color: AppTheme.backgroundColor),
             onPressed: player.hasNext ? (){
               player.seekToNext();
               print(player.currentIndex);
@@ -84,7 +85,7 @@ class ControlButtons extends StatelessWidget {
           stream: player.speedStream,
           builder: (context, snapshot) => IconButton(
             icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+                style: AppTheme.headLine3),
             onPressed: () {
               showSliderDialog(
                 context: context,

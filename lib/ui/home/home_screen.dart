@@ -62,10 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   height: 24,
                 ),
-                const Charts(),
-                const SizedBox(
-                  height: 24,
-                ),
+                const  RelaxPlayist(),
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -88,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(
                   height: 24,
                 ),
-              const  RelaxPlayist()
+                const Charts(),
+              
 
               ],
             ),

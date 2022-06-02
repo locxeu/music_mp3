@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_mp3_app/common.dart';
+import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/controlButton.dart';
+import 'package:music_mp3_app/ui/widget/header_detail_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-
+import 'extension/extension.dart';
 class DetailSong2 extends StatefulWidget {
   final AudioPlayer audioPlayer;
   final VoidCallback onTap;
@@ -47,27 +49,16 @@ class _DetailSong2State extends State<DetailSong2>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
+    return  Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
             const SizedBox(
               height: 40,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(onPressed: widget.onTap, icon:const Icon(Icons.arrow_back_ios)),
-                const Text(
-                  'Now Playing',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-                 IconButton(onPressed: (){}, icon:const Icon(Icons.alarm),)
-              ],
-            ),
-            const SizedBox(
-              height: 100,
+            HeaderPlayingSong(onTap: widget.onTap,),
+             SizedBox(
+              height: context.height*0.08,
             ),
                 StreamBuilder(
                 stream: widget.audioPlayer.currentIndexStream,
@@ -106,7 +97,7 @@ class _DetailSong2State extends State<DetailSong2>
                     );
                   }
                   return SizedBox(
-                    height: 70,
+                    height: 82,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -117,7 +108,7 @@ class _DetailSong2State extends State<DetailSong2>
                           textAlign: TextAlign.center,
                           maxLines: 2,
                           style:
-                              TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                              AppTheme.headLine1,
                         ),
                       ),
                       ],
@@ -141,7 +132,7 @@ class _DetailSong2State extends State<DetailSong2>
                           .artist!,
                       textAlign: TextAlign.center,
                       style:
-                         const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                         AppTheme.headLine2,
                     ),
                   );
                 }),
@@ -163,8 +154,8 @@ class _DetailSong2State extends State<DetailSong2>
                 );
               },
             ),
-            const SizedBox(
-              height: 30,
+             SizedBox(
+              height: context.height*0.02,
             ),
             ControlButtons(widget.audioPlayer),
             Row(
@@ -197,7 +188,7 @@ class _DetailSong2State extends State<DetailSong2>
                   Expanded(
                     child: Text(
                       "Local Song",
-                      style: Theme.of(context).textTheme.headline6,
+                      style: AppTheme.headLine3,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -223,7 +214,6 @@ class _DetailSong2State extends State<DetailSong2>
               ),
           ],
         ),
-      ),
     );
   }
 }
