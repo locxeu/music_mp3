@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -126,12 +127,12 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Release the player's resources when not in use. We use "stop" so that
-      // if the app resumes later, it will still remember what position to
-      // resume from.
-      Instances.player.stop();
-    }
+    // if (state == AppLifecycleState.paused) {
+    //   // Release the player's resources when not in use. We use "stop" so that
+    //   // if the app resumes later, it will still remember what position to
+    //   // resume from.
+    //   Instances.player.stop();
+    // }
   }
 
   Stream<PositionData> get _positionDataStream =>
@@ -165,16 +166,16 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                   if (state?.sequence.isEmpty ?? true) {
                     return const SizedBox();
                   }
-                  final metadata = state!.currentSource!.tag as AudioMetadata;
+                  final metadata = state!.currentSource!.tag as MediaItem;
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(child: Image.network(metadata.artwork,height:context.height*0.25,)),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Center(child: Image.network(metadata.artwork,height:context.height*0.25,)),
+                      //   ),
+                      // ),
                       Text(metadata.title,style: AppTheme.headLine3,),
                     ],
                   );
@@ -277,6 +278,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                             ),
                           ),
                           onDismissed: (dismissDirection) {
+                           
                             _playlist.removeAt(i);
                           },
                           child: Material(
@@ -309,6 +311,8 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                               ),
                               onTap: () {
                                 Instances.player.seek(Duration.zero, index: i);
+                                                                 print(' 123 ${ state.currentIndex}');
+
                               },
                             ),
                           ),
@@ -340,14 +344,14 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
   }
 }
 
-class AudioMetadata {
-  final String album;
-  final String title;
-  final String artwork;
+// class MediaItem {
+//   final String album;
+//   final String title;
+//   final String artwork;
 
-  AudioMetadata({
-    required this.album,
-    required this.title,
-    required this.artwork,
-  });
-}
+//   MediaItem({
+//     required this.album,
+//     required this.title,
+//     required this.artwork,
+//   });
+// }
