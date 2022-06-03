@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       child: Column(
         children: [
           const SizedBox(
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
               child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 Align(
@@ -62,10 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   height: 24,
                 ),
-                const Charts(),
-                const SizedBox(
-                  height: 24,
-                ),
+                const  RelaxPlayist(),
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -88,7 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(
                   height: 24,
                 ),
-              const  RelaxPlayist()
+                const Charts(),
+              const SizedBox(
+                  height: 24,
+                ),
 
               ],
             ),

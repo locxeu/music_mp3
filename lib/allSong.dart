@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -47,10 +48,11 @@ class _AllSongState extends State<AllSong> {
         localAudioSource.add(
           AudioSource.uri(
             Uri.parse(listLocalSong[i].uri!),
-            tag: AudioMetadata(
+            tag: MediaItem(
               album: listLocalSong[i].album!,
               title: listLocalSong[i].displayNameWOExt,
-              artwork: listLocalSong[i].id.toString(),
+              id: listLocalSong[i].id.toString()
+              // artwork: listLocalSong[i].id.toString(),
             ),
           ),
         );

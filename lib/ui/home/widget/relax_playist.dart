@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/config/theme/image_path.dart';
+import 'package:music_mp3_app/database/relax_song_db/coffe.dart';
+import 'package:music_mp3_app/database/relax_song_db/piano.dart';
+import 'package:music_mp3_app/networkSong.dart';
 
 class RelaxPlayist extends StatefulWidget {
   const RelaxPlayist({Key? key}) : super(key: key);
@@ -20,9 +23,13 @@ class _RelaxPlayistState extends State<RelaxPlayist> {
         children: [
           InkWell(
             onTap: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NetworkSong(listAudio: coffePlayist,)),
+              );
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Image.asset(
@@ -37,9 +44,13 @@ class _RelaxPlayistState extends State<RelaxPlayist> {
           ),
           InkWell(
             onTap: () {
+               Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NetworkSong(listAudio: piano,)),
+              );
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Image.asset(
@@ -56,7 +67,7 @@ class _RelaxPlayistState extends State<RelaxPlayist> {
             onTap: () {
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Image.asset(

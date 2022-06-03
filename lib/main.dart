@@ -1,13 +1,14 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:music_mp3_app/allSong.dart';
-import 'package:music_mp3_app/enum.dart';
-import 'package:music_mp3_app/networkSong.dart';
-import 'package:music_mp3_app/ui/home/home_page.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_mp3_app/ui/splash_screen.dart';
 
-void main() {
+
+Future<void> main()async {
+   await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   runApp(const MyApp());
 }
 
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: HomePage()
+      home: const SplashScreen()
     );
   }
 }

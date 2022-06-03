@@ -44,6 +44,7 @@ class AwesomeSnackbarContent extends StatelessWidget {
         /// SnackBar Body
         Center(
           child: Container(
+            // margin: EdgeInsets.symmetric(horizontal: 10),
             padding: EdgeInsets.symmetric(
               horizontal: size.width * 0.05,
               vertical: size.height * 0.025,
