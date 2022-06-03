@@ -24,7 +24,7 @@ class NetworkSong extends StatefulWidget {
 
 class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
   // late AudioPlayer Instances.player;
-  var _playlist = null;
+  var _playlist;
 
   // final _playlist =
   // Remove this audio source from the Windows and Linux version because it's not supported yet
@@ -70,7 +70,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
   //   ),
   // ),
 
-  int _addedCount = 0;
+  final int _addedCount = 0;
 
   @override
   void initState() {
@@ -170,12 +170,12 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(8.0),
-                      //     child: Center(child: Image.network(metadata.artwork,height:context.height*0.25,)),
-                      //   ),
-                      // ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(child: Image.network(metadata.artUri.toString(),height:context.height*0.25,)),
+                        ),
+                      ),
                       Text(metadata.title,style: AppTheme.headLine3,),
                     ],
                   );
