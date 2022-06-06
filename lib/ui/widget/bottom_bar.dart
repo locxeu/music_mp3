@@ -1,4 +1,3 @@
-import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,7 +15,6 @@ class NavigationBarWidget extends StatefulWidget {
 }
 
 class NavigationBarWidgetState extends State<NavigationBarWidget> {
-ListQueue<int> _navigationQueue = ListQueue();
   @override
   Widget build(BuildContext context) {
 
