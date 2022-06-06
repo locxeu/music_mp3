@@ -26,25 +26,30 @@ class AppTheme {
   );
 
   ///Default font
-  static TextStyle headLine1 = GoogleFonts.nunito(
+  static TextStyle headLine1 = GoogleFonts.roboto(
     fontWeight: FontWeight.bold,
     fontSize: 30,
     color: backgroundColor
   );
-  static TextStyle headLine2 = GoogleFonts.nunito(
+  static TextStyle headLine2 = GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
     fontSize: 22,
     color: backgroundColor
   );
-  static TextStyle headLine3 = GoogleFonts.nunito(
+  static TextStyle headLine3 = GoogleFonts.roboto(
     fontWeight: FontWeight.w600,
     fontSize: 20,
     color: backgroundColor
   );
-    static TextStyle headLine4 = GoogleFonts.nunito(
+    static TextStyle headLine4 = GoogleFonts.roboto(
     fontWeight: FontWeight.w600,
     fontSize: 20,
     color: subTitle
+  );
+      static TextStyle headLine5 = GoogleFonts.roboto(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+    color: Colors.grey.shade900
   );
 
 

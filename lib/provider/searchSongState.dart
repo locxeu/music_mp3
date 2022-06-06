@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:music_mp3_app/provider/baseState.dart';
 import 'dart:developer';
 
 import 'package:music_mp3_app/repository/searchSongRepo.dart';
 
-class SearchSongState extends ChangeNotifier {
+class SearchSongState extends BaseState {
   String test = 'var ytInitialData = ';
   bool isLoading = false;
   final searchSongRepo = SearchSongRepo();
@@ -26,8 +26,8 @@ class SearchSongState extends ChangeNotifier {
     return result;
   }
 
-  Future<dynamic> queryYoutubeApi(String searchText) async {
-    isLoading = true;
+  Future<dynamic> queryYoutubeApi(String searchText,context) async {
+   setLoading(context);
     var result = await searchSongRepo.search(decode(api) + searchText);
     result = trimString(result);
     log('has verticalListRenderer ${result.contains('')}');
@@ -65,79 +65,37 @@ class SearchSongState extends ChangeNotifier {
         'duration': '0:00',
         'thumbnail':'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Circle-icons-music.svg/1024px-Circle-icons-music.svg.png'
       });
+
+      //Get Duration
       if (listSong[i]['videoRenderer']['lengthText'] != null) {
-        print('null');
         if (listSong[i]['videoRenderer']['lengthText']['runs'] != null) {
-          print('here');
           listSong1[i]['duration'] =
               listSong[i]['videoRenderer']['lengthText']['runs'][0]['text'];
         }
         if (listSong[i]['videoRenderer']['lengthText']['simpleText'] != null) {
-          print('hello');
           listSong1[i]['duration'] =
               listSong[i]['videoRenderer']['lengthText']['simpleText'];
         }
       }
+      //Get thumbnail
 
       if (listSong[i]['videoRenderer']["thumbnail"] != null) {
-//                        System.out.println("log1 ");
-//                        System.out.println(itemSong.optJSONObject("thumbnail"));
         if (listSong[i]['videoRenderer']["thumbnail"]["thumbnails"] != null) {
-//                            System.out.println("log2 ");
           int leng = listSong[i]['videoRenderer']["thumbnail"]["thumbnails"].length;
           if (leng > 0) {
-//                                System.out.println("log3 ");
-//                                System.out.println(itemSong.getJSONObject("thumbnail").getJSONArray("thumbnails").getJSONObject(leng - 1));
             if (listSong[i]['videoRenderer']["thumbnail"]["thumbnails"][leng -1]['url'] !=
                 null) {
                   listSong1[i]['thumbnail']=listSong[i]['videoRenderer']["thumbnail"]["thumbnails"][leng -1]['url'];
-//                                    System.out.println("log4 ");
-//                                    System.out.println(itemSong.getJSONObject("thumbnail").getJSONArray("thumbnails").getJSONObject(leng - 1).getString("url"));
-
             }
           }
         }
       }
     }
-//       for (int i = 0; i < listItems.length; i++) {
-// //  log('listItems $i ====> ${listItems[i]['videoRenderer']}');
-// //  log('==============cccxxxxccc======================');
-//         // if (listItems[i]['videoRenderer'] != null) {
-//         //   log('index $i ${listItems[i]['videoRenderer']['videoId']}');
-
-//         //   listSong
-//         //       .add({'id': '${listItems[i]['videoRenderer']['videoId']}','title':
-//         //         '${listItems[i]['videoRenderer']['title']['runs'][0]['text']}','duration':''});
-//         //   //       listSong.addAll(json['id']);
-//         //     //  listSong.addAll({'duration':'${listItems[i]['videoRenderer']['videoId']}'})
-//         // }
-//    listSong
-//               .add({'id': '${listSong[i]['videoRenderer']['videoId']}','title':
-//                 '${listSong[i]['videoRenderer']['title']['runs'][0]['text']}','duration':''});
-//                 listSong[i]['duration']=listSong[i]['videoRenderer']['videoId'];
-
-// //   if(listSong[i]["lengthText"] == null){
-// //     return
-// //   }
-// //                         if(listSong[i]['lengthText']['runs'] != null) {
-// //                             obj.put("duration", listSong.getJSONObject("lengthText").getJSONArray("runs").getJSONObject(0).get("text").toString());
-// //                         }else if(listSong.getJSONObject("lengthText").optString("simpleText") != null) {
-// //                             obj.put("duration", listSong.getJSONObject("lengthText").get("simpleText").toString());
-// //                         }else{
-// //                             System.out.println("NULL DURATION");
-// // //                            System.out.println(listSong.getJSONObject("lengthText"));
-// //                             obj.put("duration","00:00");
-// //                         }
-// //                     }else{
-// //                         obj.put("duration","00:00");
-// //                     }
-//       }
-
     log('json $json');
     log('json $listSong1');
     log('json ${listSong.length}');
+   setDoneLoading(context);
 
-    isLoading = false;
     //  log('listSong $listSong');
     notifyListeners();
   }

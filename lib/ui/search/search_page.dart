@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/extension/extension.dart';
+import 'package:music_mp3_app/networkSong.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -16,7 +18,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchText = TextEditingController();
   late String str;
-
+List<AudioSource> playList=[];
   void handleString() {}
 // late YoutubePlayerController ytController;
 
@@ -41,15 +43,27 @@ class _SearchPageState extends State<SearchPage> {
     searchText.dispose();
   }
 
-  Future<void> testaudio() async {
+  Future<void> testaudio(List<dynamic> song) async {
+
     var yt = YoutubeExplode();
-    var streamInfo = await yt.videos.streamsClient.getManifest('4JLe7s976k0');
+    for (int i=0;i<song.length;i++){
+    var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
     StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+    playList.add( AudioSource.uri(
+        streamInfo1.url,
+    tag: MediaItem(
+        id: i.toString(),
+        album: "Đường về",
+        title: song[i]['title'],
+        artUri: Uri.parse(song[i]['thumbnail']))));
     print(streamInfo);
     print(streamInfo1.url);
     var stream = yt.videos.streamsClient.get(streamInfo1);
     // Close the YoutubeExplode's http client.
+    
+    }
     yt.close();
+    
   }
 
   @override
@@ -74,9 +88,10 @@ class _SearchPageState extends State<SearchPage> {
               icon: Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: GestureDetector(
-                    onTap: () {
+                    onTap: ()async {
                       print('searchText ${searchText.text}');
-                   searchState.queryYoutubeApi(searchText.text);
+                await searchState.queryYoutubeApi(searchText.text,context);
+                testaudio(searchState.listSong1);
                     },
                     child: const Icon(Icons.search)),
               ),
@@ -89,13 +104,28 @@ class _SearchPageState extends State<SearchPage> {
     //  Text(searchState.listSong.length.toString())
       Expanded(
             child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
                 itemCount: searchState.listSong1.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Image.network(
-                        searchState.listSong1[index]['thumbnail']),
-                    title: Text(searchState.listSong1[index]['title'],style: AppTheme.headLine3),
-                    subtitle: Text(searchState.listSong1[index]['duration'],style: AppTheme.headLine3),
+                  return InkWell(
+                    onTap: (){
+                             Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NetworkSong(listAudio: playList,)),
+              );
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        radius: 50,
+                        child: Image.network(
+                            searchState.listSong1[index]['thumbnail']),
+                      ),
+                      title: SizedBox(
+                        width: context.width*0.7,
+                        child: Text(searchState.listSong1[index]['title'],style: AppTheme.headLine2,maxLines: 1,)),
+                      subtitle: Text(searchState.listSong1[index]['duration'],style: AppTheme.headLine5),
+                      // trailing: Icon(Icons.h_plus_mobiledata),
+                    ),
                   );
                 })),
       ]);
