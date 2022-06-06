@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/extension/extension.dart';
@@ -17,7 +16,6 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchText = TextEditingController();
   late String str;
-
 
   void handleString() {}
 // late YoutubePlayerController ytController;
@@ -42,21 +40,22 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
     searchText.dispose();
   }
-Future<void> testaudio() async {
-  var yt = YoutubeExplode();
-  var streamInfo = await yt.videos.streamsClient.getManifest('4JLe7s976k0');
-  StreamInfo streamInfo1 =streamInfo.audioOnly.withHighestBitrate();
-  print(streamInfo);
-  print(streamInfo1.url);
- var stream =yt.videos.streamsClient.get(streamInfo1);
-  // Close the YoutubeExplode's http client.
-  yt.close();
-}
+
+  Future<void> testaudio() async {
+    var yt = YoutubeExplode();
+    var streamInfo = await yt.videos.streamsClient.getManifest('4JLe7s976k0');
+    StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+    print(streamInfo);
+    print(streamInfo1.url);
+    var stream = yt.videos.streamsClient.get(streamInfo1);
+    // Close the YoutubeExplode's http client.
+    yt.close();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<SearchSongState>(
-      builder: (_,searchState,__)=>
-      Column(children: [
+    return Consumer<SearchSongState>(builder: (_, searchState, __) {
+      return Column(children: [
         SizedBox(
           height: context.height * 0.06,
         ),
@@ -76,9 +75,8 @@ Future<void> testaudio() async {
                 padding: const EdgeInsets.only(left: 10),
                 child: GestureDetector(
                     onTap: () {
-                      
                       print('searchText ${searchText.text}');
-                      // queryYoutubeApi();
+                   searchState.queryYoutubeApi(searchText.text);
                     },
                     child: const Icon(Icons.search)),
               ),
@@ -87,37 +85,20 @@ Future<void> testaudio() async {
             ),
           ),
         ),
-        Expanded(
-          child: Column(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          // ytController.pause();
-                          // testaudio();
-                          print('searcj');
-                          // queryYoutubeApi();
-                          searchState.queryYoutubeApi(searchText.text);
-                        },
-                        child: const Text('search')),
-                    //           YoutubePlayer(controller: ytController,
-                    //           showVideoProgressIndicator: true,
-                    //           width: 500,
-                    //           progressColors: const ProgressBarColors(backgroundColor: Colors.red),
-                    //           progressIndicatorColor: Colors.amber,
-                    //  bottomActions:  [
-                    //    Text('data',style: AppTheme.headLine1,)
-                    //  ],
-                    //           )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      ]),
-    );
+     searchState.isLoading?const CircularProgressIndicator(): 
+    //  Text(searchState.listSong.length.toString())
+      Expanded(
+            child: ListView.builder(
+                itemCount: searchState.listSong1.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Image.network(
+                        searchState.listSong1[index]['thumbnail']),
+                    title: Text(searchState.listSong1[index]['title'],style: AppTheme.headLine3),
+                    subtitle: Text(searchState.listSong1[index]['duration'],style: AppTheme.headLine3),
+                  );
+                })),
+      ]);
+    });
   }
 }
