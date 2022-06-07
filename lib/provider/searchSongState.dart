@@ -80,16 +80,8 @@ notifyListeners();
       listItems = data['contents']['twoColumnSearchResultsRenderer']
               ['primaryContents']['sectionListRenderer']['contents'][0]
           ['itemSectionRenderer']['contents'];
-      log('listItems3 2 length ${listItems.length}');
-      //  log('listItems3 2 $listItems');
-      log('====================================');
-      log('====================================');
-
-// log('listItems3 $listItems');
-      // log('listItems $listItems');
     }
         var yt = YoutubeExplode();
-
     listSong.clear();
     listSong1.clear();
     listSong =

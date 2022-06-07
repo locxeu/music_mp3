@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
@@ -25,9 +27,10 @@ class NetworkSong extends StatefulWidget {
   NetworkSongState createState() => NetworkSongState();
 }
 
-class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
+class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,SingleTickerProviderStateMixin {
   // late AudioPlayer Instances.player;
   var _playlist;
+  late AnimationController _controller;
 
   // final _playlist =
   // Remove this audio source from the Windows and Linux version because it's not supported yet
@@ -84,12 +87,20 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
       statusBarColor: Colors.black,
     ));
     _init();
+       _controller = AnimationController(
+      duration: const Duration(minutes: 6),
+      vsync: this,
+    );
+    if (mounted) {
+      _controller.forward();
+    }
   }
   // Future<void> loadNetworkSource async(){
 
   // }
 
   Future<void> _init() async {
+    log('init run');
     _playlist = ConcatenatingAudioSource(
       children: [
         for (var i = 0; i < widget.listAudio.length; i++) widget.listAudio[i]
@@ -104,9 +115,10 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
     });
     try {
       // Preloading audio is not currently supported on Linux.
-      await Instances.player.setAudioSource(_playlist,
+      await Instances.player.setAudioSource(_playlist,initialIndex:context.read<SearchSongState>().currentIndexPlaying ,
           preload: kIsWeb || defaultTargetPlatform != TargetPlatform.linux);
-        await  Instances.player.seek(Duration.zero,index:context.read<SearchSongState>().currentIndexPlaying);
+        // await  Instances.player.seek(Duration.zero,index:context.read<SearchSongState>().currentIndexPlaying);
+        Instances.player.play();
     } catch (e) {
       // Catch load errors: 404, invalid url...
       print("Error123 loading audio source: $e");
@@ -126,6 +138,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
   void dispose() {
     ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     // Instances.player.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -198,9 +211,12 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Center(child: CircleAvatar(
-                              radius: 100,
-                              backgroundImage: NetworkImage(metadata.artUri.toString(),))),
+                            child: Center(child: RotationTransition(
+                                            turns: Tween(begin: 0.0, end: 5.0).animate(_controller),
+                              child: CircleAvatar(
+                                radius: 100,
+                                backgroundImage: NetworkImage(metadata.artUri.toString(),)),
+                            )),
                           ),
                         ),
                       SizedBox(
