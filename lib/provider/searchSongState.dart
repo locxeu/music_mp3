@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/provider/baseState.dart';
 import 'dart:developer';
 
@@ -67,16 +68,18 @@ notifyListeners();
 
       Future<void> getAudio(List<dynamic> song,int index) async {
     var yt = YoutubeExplode();
+
       var streamInfo = await yt.videos.streamsClient.getManifest(song[index]['id']);
       if (streamInfo.audioOnly.isNotEmpty) {
         StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
         print('${streamInfo1.url}');
         playList.add(AudioSource.uri(streamInfo1.url,
             tag: MediaItem(
-                id: '1',
+                id: index.toString(),
                 album: "Đường về",
                 title: song[index]['title'],
                 artUri: Uri.parse(song[index]['thumbnail']))));
+        Instances.player.setAudioSource(playList[0]);        
       }
     yt.close();
   }
@@ -119,7 +122,7 @@ notifyListeners();
         log('hinh nhu khong run in here');
       log('id ${listSong[i]['videoRenderer']['videoId']}');
     //  var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
-    // //  var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
+    //  var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
 
     //   if (streamInfo.audioOnly.isEmpty) {continue;}
     //     StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();

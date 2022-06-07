@@ -28,19 +28,28 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   final TextEditingController searchText = TextEditingController();
   late String str;
   var _playlist;
-var playListSong ;
+  var playListSong;
 
   void handleString() {}
   Future<void> _init() async {
     log('init run');
-    _playlist = ConcatenatingAudioSource(
-      children: [
-        for (var i = 0;
-            i < playListSong.length;
-            i++)
-          playListSong[i]
-      ],
-    );
+    if (playListSong != null) {
+      _playlist = ConcatenatingAudioSource(
+        children: [
+          for (var i = 0; i < playListSong.length; i++) playListSong[i]
+        ],
+      );
+    } else {
+      _playlist = ConcatenatingAudioSource(
+        children: [
+          for (var i = 0;
+              i < context.read<SearchSongState>().listSong1.length;
+              i++)
+            context.read<SearchSongState>().listSong1[i]
+        ],
+      );
+    }
+
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
     // Listen to errors during playback.
@@ -69,8 +78,9 @@ var playListSong ;
           });
     }
   }
-    static testaudio(List<dynamic> song) async {
-         List<AudioSource> playList = [];
+
+  static testaudio(List<dynamic> song) async {
+    List<AudioSource> playList = [];
     var yt = YoutubeExplode();
     for (int i = 0; i < song.length; i++) {
       var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
@@ -143,12 +153,12 @@ var playListSong ;
                       child: GestureDetector(
                           onTap: () async {
                             print('searchText ${searchText.text}');
-                            await searchState
-                                .queryYoutubeApi(searchText.text, context);
-                            playListSong=  await compute(testaudio,searchState.listSong1);
+                            await searchState.queryYoutubeApi(
+                                searchText.text, context);
+
                             // testaudio(searchState.listSong1);
-                            print('_playlist ${_playlist.toString()}');
-                             await _init();
+                            // print('_playlist ${_playlist.toString()}');
+                            //  await _init();
                           },
                           child: const Icon(Icons.search)),
                     ),
@@ -176,17 +186,20 @@ var playListSong ;
                                 onTap: () async {
                                   print('play index $index');
                                   log('inmdex ${state.currentIndex}');
-                                                                    log('data ${state.toString()}');
+                                  log('data ${state.toString()}');
 
                                   searchState.playSong();
-                                  // await searchState.getAudio(searchState.listSong1, index);
-                                 
+                                  await searchState.getAudio(
+                                      searchState.listSong1, index);
+                                  playListSong = await compute(
+                                      testaudio, searchState.listSong1);
+                                  await _init();
                                   log('========');
                                   log('${Instances.player.playerState}');
                                   log('========');
-                                  await Instances.player
-                                      .seek(Duration.zero, index: index);
-                                  await Instances.player.play();
+                                  // await Instances.player
+                                  //     .seek(Duration.zero, index: index);
+                                  // await Instances.player.play();
 
                                   // searchState.getCurrentIndex(index);
                                   //               Navigator.push(
