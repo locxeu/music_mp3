@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/provider/baseState.dart';
 import 'dart:developer';
 
 import 'package:music_mp3_app/repository/searchSongRepo.dart';
+import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class SearchSongState extends BaseState {
@@ -41,7 +43,8 @@ notifyListeners();
     result = result.substring(0, idxEnd);
     return result;
   }
-    Future<void> testaudio(List<dynamic> song) async {
+   static testaudio(List<dynamic> song) async {
+         List<AudioSource> playList = [];
     var yt = YoutubeExplode();
     for (int i = 0; i < song.length; i++) {
       var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
@@ -59,49 +62,69 @@ notifyListeners();
       }
     }
     yt.close();
+    return playList;
+  }
+
+      Future<void> getAudio(List<dynamic> song,int index) async {
+    var yt = YoutubeExplode();
+      var streamInfo = await yt.videos.streamsClient.getManifest(song[index]['id']);
+      if (streamInfo.audioOnly.isNotEmpty) {
+        StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+        print('${streamInfo1.url}');
+        playList.add(AudioSource.uri(streamInfo1.url,
+            tag: MediaItem(
+                id: '1',
+                album: "Đường về",
+                title: song[index]['title'],
+                artUri: Uri.parse(song[index]['thumbnail']))));
+      }
+    yt.close();
   }
 
   Future<dynamic> queryYoutubeApi(String searchText,context) async {
    setLoading(context);
-    var result = await searchSongRepo.search(decode(api) + searchText);
+   try{
+  var result = await searchSongRepo.search(decode(api) + searchText);
     result = trimString(result);
-    log('has verticalListRenderer ${result.contains('')}');
     var listItems = [];
     final data = jsonDecode(result);
-// log('res: ${data['contents']}');
 
     if (data['contents']['sectionListRenderer'] != null) {
-      listItems.add(data['contents']['sectionListRenderer']['contents']);
+      listItems=data['contents']['sectionListRenderer']['contents'];
       log('listItems1 $listItems');
     } else if (data['contents']['singleColumnBrowseResultsRenderer'] != null) {
-      listItems.add(data['contents']['singleColumnBrowseResultsRenderer']);
+      listItems=data['contents']['singleColumnBrowseResultsRenderer'];
       log('listItems2 $listItems');
     } else if (data['contents']['twoColumnSearchResultsRenderer'] != null) {
       // log('data ${data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']}');
       listItems = data['contents']['twoColumnSearchResultsRenderer']
               ['primaryContents']['sectionListRenderer']['contents'][0]
           ['itemSectionRenderer']['contents'];
+          //  log('listItems3 $listItems');
     }
         var yt = YoutubeExplode();
     listSong.clear();
     listSong1.clear();
+    playList.clear();
     listSong =
         listItems.where((element) => element['videoRenderer'] != null).toList();
     for (int i = 0; i < listSong.length; i++) {
+      log('run in here');
       listSong1.add({
         'id': '${listSong[i]['videoRenderer']['videoId']}',
         'title': '${listSong[i]['videoRenderer']['title']['runs'][0]['text']}',
         'duration': '0:00',
         'thumbnail':'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Circle-icons-music.svg/1024px-Circle-icons-music.svg.png'
       });
+        log('hinh nhu khong run in here');
       log('id ${listSong[i]['videoRenderer']['videoId']}');
-     var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
+    //  var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
+    // //  var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
 
-      if (streamInfo.audioOnly.isEmpty) {continue;}
-        StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
-        print('$i ${streamInfo1.url}');
+    //   if (streamInfo.audioOnly.isEmpty) {continue;}
+    //     StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+        // print('$i ${}');
         
-        var stream = yt.videos.streamsClient.get(streamInfo1);
       //Get Duration
       if (listSong[i]['videoRenderer']['lengthText'] != null) {
         if (listSong[i]['videoRenderer']['lengthText']['runs'] != null) {
@@ -126,12 +149,12 @@ notifyListeners();
           }
         }
       }
-      playList.add(AudioSource.uri(streamInfo1.url,
-            tag: MediaItem(
-                id: i.toString(),
-                album: "Đường về",
-                title: listSong1[i]['title'],
-                artUri: Uri.parse(listSong1[i]['thumbnail']))));
+      // playList.add(AudioSource.uri(streamInfo1.url,
+      //       tag: MediaItem(
+      //           id: i.toString(),
+      //           album: "Đường về",
+      //           title: listSong1[i]['title'],
+      //           artUri: Uri.parse(listSong1[i]['thumbnail']))));
     }
     // log('json $json');
     // log('json $listSong1');
@@ -142,6 +165,17 @@ notifyListeners();
   
    yt.close();
    setDoneLoading(context);
+   }catch(e){
+     listSong1=[];
+     playList=[];
+        showDialog(
+          context: context,
+          builder: (context) {
+            return CustomDialogBox( title: 'Sorry', descriptions: e.toString(), text: 'OK');
+          });
+     setDoneLoading(context);
+   }
+  
 
     notifyListeners();
 

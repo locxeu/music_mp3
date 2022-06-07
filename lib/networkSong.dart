@@ -170,18 +170,20 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
         return Material(
         child: Container(
           decoration: const BoxDecoration(
+            // color: Colors.red
               image: DecorationImage(
-                  image: AssetImage('assets/images/bg.jpg'), fit: BoxFit.cover)),
+                  image: AssetImage('assets/images/bg.jpg'), fit: BoxFit.cover)
+                  ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: context.height*0.005,
+                height: context.height*0.1,
               ),
               HeaderPlayingSong(onTap: (){networkSong.playSong();},),
                SizedBox(
-              height: context.height*0.08,
+              height: context.height*0.06,
             ),
               StreamBuilder<SequenceState?>(
                 stream: Instances.player.sequenceStateStream,

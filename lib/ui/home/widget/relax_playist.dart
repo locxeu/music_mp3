@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/config/theme/image_path.dart';
+import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 
 class RelaxPlayist extends StatefulWidget {
   const RelaxPlayist({Key? key}) : super(key: key);
@@ -20,10 +21,11 @@ class _RelaxPlayistState extends State<RelaxPlayist> {
         children: [
           InkWell(
             onTap: () {
-              //   Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => NetworkSong(listAudio: coffePlayist,)),
-              // );
+            showDialog(
+          context: context,
+          builder: (context) {
+            return CustomDialogBox( title: 'Sorry', descriptions: 'This feature is not availabe yet!!!'.toString(), text: 'OK');
+          });
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),

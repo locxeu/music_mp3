@@ -55,7 +55,8 @@ class AppTheme {
 
   ///Singleton factory
   static final AppTheme _instance = AppTheme._internal();
-
+  static const double padding =20;
+  static const double avatarRadius =45;
   factory AppTheme(){
     return _instance;
   }
