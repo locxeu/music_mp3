@@ -49,7 +49,7 @@ class AppTheme {
       static TextStyle headLine5 = GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
     fontSize: 20,
-    color: Colors.grey.shade900
+    color: Colors.white70
   );
 
 

@@ -26,7 +26,7 @@ class LocalPage extends StatefulWidget {
 
 class _LocalPageState extends State<LocalPage> {
   List<AudioSource> localAudioSource = [];
-  var playlist = null;
+  var playlist;
   List<SongModel> listLocalSong = [];
   bool isTabPlay = false;
   Stream<PositionData> get _positionDataStream =>
@@ -132,7 +132,7 @@ class _LocalPageState extends State<LocalPage> {
   }
 
 
-  final _audioQuery = new OnAudioQuery();
+  final _audioQuery = OnAudioQuery();
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override

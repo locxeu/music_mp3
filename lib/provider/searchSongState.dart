@@ -1,9 +1,12 @@
 import 'dart:convert';
 
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/provider/baseState.dart';
 import 'dart:developer';
 
 import 'package:music_mp3_app/repository/searchSongRepo.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class SearchSongState extends BaseState {
   String test = 'var ytInitialData = ';
@@ -12,8 +15,20 @@ class SearchSongState extends BaseState {
   Map<String, dynamic> json = {};
   List<dynamic> listSong = [];
   List<dynamic> listSong1 = [];
+  bool isPlaying = false;
+  int currentIndexPlaying=0;
+    List<AudioSource> playList = [];
 
   String api = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vcmVzdWx0cz9zZWFyY2hfcXVlcnk9';
+  playSong(){
+    isPlaying=!isPlaying;
+    notifyListeners();
+  }
+
+  getCurrentIndex(int index){
+currentIndexPlaying =index;
+notifyListeners();
+  }
   decode(String linkapi) {
     return utf8.decode(base64.decode(linkapi));
   }
@@ -24,6 +39,25 @@ class SearchSongState extends BaseState {
     int idxEnd = result.indexOf("</script>") - 1;
     result = result.substring(0, idxEnd);
     return result;
+  }
+    Future<void> testaudio(List<dynamic> song) async {
+    var yt = YoutubeExplode();
+    for (int i = 0; i < song.length; i++) {
+      var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
+
+      if (streamInfo.audioOnly.isNotEmpty) {
+        StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+        print('$i ${streamInfo1.url}');
+        playList.add(AudioSource.uri(streamInfo1.url,
+            tag: MediaItem(
+                id: i.toString(),
+                album: "Đường về",
+                title: song[i]['title'],
+                artUri: Uri.parse(song[i]['thumbnail']))));
+        var stream = yt.videos.streamsClient.get(streamInfo1);
+      }
+    }
+    yt.close();
   }
 
   Future<dynamic> queryYoutubeApi(String searchText,context) async {
@@ -54,6 +88,8 @@ class SearchSongState extends BaseState {
 // log('listItems3 $listItems');
       // log('listItems $listItems');
     }
+        var yt = YoutubeExplode();
+
     listSong.clear();
     listSong1.clear();
     listSong =
@@ -65,7 +101,14 @@ class SearchSongState extends BaseState {
         'duration': '0:00',
         'thumbnail':'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Circle-icons-music.svg/1024px-Circle-icons-music.svg.png'
       });
+      log('id ${listSong[i]['videoRenderer']['videoId']}');
+     var streamInfo = await yt.videos.streamsClient.getManifest(listSong1[i]['id']);
 
+      if (streamInfo.audioOnly.isEmpty) {continue;}
+        StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+        print('$i ${streamInfo1.url}');
+        
+        var stream = yt.videos.streamsClient.get(streamInfo1);
       //Get Duration
       if (listSong[i]['videoRenderer']['lengthText'] != null) {
         if (listSong[i]['videoRenderer']['lengthText']['runs'] != null) {
@@ -90,15 +133,26 @@ class SearchSongState extends BaseState {
           }
         }
       }
+      playList.add(AudioSource.uri(streamInfo1.url,
+            tag: MediaItem(
+                id: i.toString(),
+                album: "Đường về",
+                title: listSong1[i]['title'],
+                artUri: Uri.parse(listSong1[i]['thumbnail']))));
     }
-    log('json $json');
-    log('json $listSong1');
-    log('json ${listSong.length}');
-   setDoneLoading(context);
+    // log('json $json');
+    // log('json $listSong1');
+    // log('json ${listSong.length}');
+       
 
     //  log('listSong $listSong');
-    notifyListeners();
-  }
+  
+   yt.close();
+   setDoneLoading(context);
 
+    notifyListeners();
+
+ }
   getDuration(List test) {}
+
 }

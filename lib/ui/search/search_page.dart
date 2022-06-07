@@ -7,6 +7,7 @@ import 'package:music_mp3_app/networkSong.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController searchText = TextEditingController();
   late String str;
-List<AudioSource> playList=[];
+  List<AudioSource> playList = [];
   void handleString() {}
 // late YoutubePlayerController ytController;
 
@@ -44,32 +45,29 @@ List<AudioSource> playList=[];
   }
 
   Future<void> testaudio(List<dynamic> song) async {
-
     var yt = YoutubeExplode();
-    for (int i=0;i<song.length;i++){
-    var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
-    StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
-    playList.add( AudioSource.uri(
-        streamInfo1.url,
-    tag: MediaItem(
-        id: i.toString(),
-        album: "Đường về",
-        title: song[i]['title'],
-        artUri: Uri.parse(song[i]['thumbnail']))));
-    print(streamInfo);
-    print(streamInfo1.url);
-    var stream = yt.videos.streamsClient.get(streamInfo1);
-    // Close the YoutubeExplode's http client.
-    
+    for (int i = 0; i < song.length; i++) {
+      var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
+
+      if (streamInfo.audioOnly.isNotEmpty) {
+        StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+        print('$i ${streamInfo1.url}');
+        playList.add(AudioSource.uri(streamInfo1.url,
+            tag: MediaItem(
+                id: i.toString(),
+                album: "Đường về",
+                title: song[i]['title'],
+                artUri: Uri.parse(song[i]['thumbnail']))));
+        var stream = yt.videos.streamsClient.get(streamInfo1);
+      }
     }
     yt.close();
-    
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SearchSongState>(builder: (_, searchState, __) {
-      return Column(children: [
+      return searchState.isPlaying? NetworkSong(listAudio:searchState.playList, ): Column(children: [
         SizedBox(
           height: context.height * 0.06,
         ),
@@ -88,10 +86,11 @@ List<AudioSource> playList=[];
               icon: Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: GestureDetector(
-                    onTap: ()async {
+                    onTap: () async {
                       print('searchText ${searchText.text}');
-                await searchState.queryYoutubeApi(searchText.text,context);
-                testaudio(searchState.listSong1);
+                      await searchState.queryYoutubeApi(
+                          searchText.text, context);
+                      // testaudio(searchState.listSong1);
                     },
                     child: const Icon(Icons.search)),
               ),
@@ -100,34 +99,48 @@ List<AudioSource> playList=[];
             ),
           ),
         ),
-     searchState.isLoading?const CircularProgressIndicator(): 
-    //  Text(searchState.listSong.length.toString())
-      Expanded(
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-                itemCount: searchState.listSong1.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: (){
-                             Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NetworkSong(listAudio: playList,)),
-              );
-                    },
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 50,
-                        child: Image.network(
-                            searchState.listSong1[index]['thumbnail']),
-                      ),
-                      title: SizedBox(
-                        width: context.width*0.7,
-                        child: Text(searchState.listSong1[index]['title'],style: AppTheme.headLine2,maxLines: 1,)),
-                      subtitle: Text(searchState.listSong1[index]['duration'],style: AppTheme.headLine5),
-                      // trailing: Icon(Icons.h_plus_mobiledata),
-                    ),
-                  );
-                })),
+        searchState.isLoading
+            ? const CircularProgressIndicator()
+            :
+            //  Text(searchState.listSong.length.toString())
+            Expanded(
+                child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: searchState.listSong1.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          // Instances.player.seek(Duration.zero, index: index);
+                          searchState.playSong();
+                          searchState.getCurrentIndex(index);
+            //               Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                     builder: (context) => ChangeNotifierProvider(
+            // create: (context) => SearchSongState(),
+            // builder: (context, child) =>  NetworkSong(listAudio: playList,index: index,))),
+            //               );
+                        },
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: NetworkImage(
+                                searchState.listSong1[index]['thumbnail']),
+                          ),
+                          title: SizedBox(
+                              width: context.width * 0.7,
+                              child: Text(
+                                searchState.listSong1[index]['title'],
+                                style: AppTheme.headLine2,
+                                maxLines: 1,
+                              )),
+                          subtitle: Text(
+                              searchState.listSong1[index]['duration'],
+                              style: AppTheme.headLine5),
+                          // trailing: Icon(Icons.h_plus_mobiledata),
+                        ),
+                      );
+                    })),
       ]);
     });
   }
