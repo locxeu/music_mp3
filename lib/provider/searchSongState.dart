@@ -22,6 +22,7 @@ class SearchSongState extends BaseState {
   String api = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vcmVzdWx0cz9zZWFyY2hfcXVlcnk9';
   playSong(){
     isPlaying=!isPlaying;
+    log('message');
     notifyListeners();
   }
 

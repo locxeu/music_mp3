@@ -1,6 +1,13 @@
+import 'dart:developer';
+
+import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
+import 'package:music_mp3_app/custom_message/awsome_snack_bar.dart';
+import 'package:music_mp3_app/custom_message/content_type.dart';
 import 'package:music_mp3_app/extension/extension.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/networkSong.dart';
@@ -15,31 +22,67 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage>with WidgetsBindingObserver {
   final TextEditingController searchText = TextEditingController();
   late String str;
-  List<AudioSource> playList = [];
-  void handleString() {}
-// late YoutubePlayerController ytController;
+    var _playlist;
 
+  void handleString() {}
+  Future<void> _init() async {
+    log('init run');
+    _playlist = ConcatenatingAudioSource(
+      children: [
+        for (var i = 0; i < context.read<SearchSongState>().playList.length; i++) context.read<SearchSongState>().playList[i]
+      ],
+    );
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    // Listen to errors during playback.
+    Instances.player.playbackEventStream.listen((event) {},
+        onError: (Object e, StackTrace stackTrace) {
+      print('A stream error occurred: $e');
+    });
+    try {
+      // Preloading audio is not currently supported on Linux.
+      await Instances.player.setAudioSource(_playlist ,initialIndex:context.read<SearchSongState>().currentIndexPlaying,
+          preload: kIsWeb || defaultTargetPlatform != TargetPlatform.linux);
+        // await  Instances.player.seek(Duration.zero,index:context.read<SearchSongState>().currentIndexPlaying);
+    
+    } catch (e) {
+      // Catch load errors: 404, invalid url...
+      print("Error123 loading audio source: $e");
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AwesomeSnackbarContent(
+              title: 'On Sorry!',
+              message: 'Error loading audio source: $e!',
+              contentType: ContentType.failure,
+            );
+          });
+    }
+  }
   @override
   void initState() {
-    // ytController= YoutubePlayerController(initialVideoId: '_MhCtjASXZA',
-    // flags: const YoutubePlayerFlags(
-    //   autoPlay: true,
-    //   startAt: 20,
-    //   // hideThumbnail: true,
-    //   // hideControls: true
-    // )
-    // );
     // TODO: implement initState
+    
     super.initState();
+       ambiguate(WidgetsBinding.instance)!.addObserver(this);
+    // Instances.player = Instances.player;
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //   statusBarColor: Colors.black,
+    // ));
+    if(!Instances.player.playing){
+    _init();
+    }
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+        ambiguate(WidgetsBinding.instance)!.removeObserver(this);
+
     searchText.dispose();
   }
 
@@ -73,6 +116,7 @@ class _SearchPageState extends State<SearchPage> {
                             print('searchText ${searchText.text}');
                             await searchState.queryYoutubeApi(
                                 searchText.text, context);
+                                await _init();
                             // testaudio(searchState.listSong1);
                           },
                           child: const Icon(Icons.search)),
@@ -82,25 +126,33 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
               ),
-              searchState.isLoading
-                  ? const CircularProgressIndicator()
-                  :
-                  //  Text(searchState.listSong.length.toString())
+                 //  Text(searchState.listSong.length.toString())
                   Expanded(
+
                       child: StreamBuilder<SequenceState?>(
                           stream: Instances.player.sequenceStateStream,
                           builder: (context, snapshot) {
                             final state = snapshot.data;
                             final sequence = state?.sequence ?? [];
+                            if(state==null){
+                              return const Center(child: CircularProgressIndicator());
+                            }
                             return ListView.builder(
                                 physics: const BouncingScrollPhysics(),
                                 itemCount: searchState.listSong1.length,
                                 itemBuilder: (context, index) {
                                   return InkWell(
-                                    onTap: () {
-                                      // Instances.player.seek(Duration.zero, index: index);
-                                      searchState.playSong();
-                                      searchState.getCurrentIndex(index);
+                                    onTap: () async{
+                                      print('play');
+                                      log('inmdex ${state.currentIndex}');
+                                        searchState.playSong();
+                                         log('========');
+                                      log(  '${Instances.player.playerState}');
+                                       log('========');
+                                   await  Instances.player.seek(Duration.zero,index:index );
+                                   await Instances.player.play();
+                                    
+                                      // searchState.getCurrentIndex(index);
                                       //               Navigator.push(
                                       //                 context,
                                       //                 MaterialPageRoute(
@@ -112,7 +164,7 @@ class _SearchPageState extends State<SearchPage> {
                                     child: Material(
                                       color: Colors.transparent,
                                       child: ListTile(
-                                        tileColor: index == state!.currentIndex
+                                        tileColor: index == state.currentIndex
                                             ? Colors.grey.shade800
                                             : null,
                                         leading: CircleAvatar(

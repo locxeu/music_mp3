@@ -81,12 +81,12 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
   @override
   void initState() {
     super.initState();
-    ambiguate(WidgetsBinding.instance)!.addObserver(this);
+    // ambiguate(WidgetsBinding.instance)!.addObserver(this);
     // Instances.player = Instances.player;
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
-    _init();
+    // _init();
        _controller = AnimationController(
       duration: const Duration(minutes: 6),
       vsync: this,
@@ -136,7 +136,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
 
   @override
   void dispose() {
-    ambiguate(WidgetsBinding.instance)!.removeObserver(this);
+    // ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     // Instances.player.dispose();
     _controller.dispose();
     super.dispose();
@@ -164,6 +164,9 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
   Widget build(BuildContext context) {
     return Consumer<SearchSongState>(
       builder: (_,networkSong,__){
+        print(Instances.player.playerState);
+                print(Instances.player.playing);
+
         return Material(
         child: Container(
           decoration: const BoxDecoration(
