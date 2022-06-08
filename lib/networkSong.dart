@@ -272,13 +272,13 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
                   );
                 },
               ),
-              Text(  Instances.currentPosition.toString(),style: AppTheme.headLine3),
-              StreamBuilder<PositionData>(
-                stream: _positionDataStream,
-                builder: (context, snapshot) {
-                return Text(snapshot.data?.position.toString()??'00',style: AppTheme.headLine3,);
-                },
-              ),
+              // Text(  Instances.currentPosition.toString(),style: AppTheme.headLine3),
+              // StreamBuilder<PositionData>(
+              //   stream: _positionDataStream,
+              //   builder: (context, snapshot) {
+              //   return Text(snapshot.data?.position.toString()??'00',style: AppTheme.headLine3,);
+              //   },
+              // ),
               const SizedBox(height: 8.0),
               Row(
                 children: [

@@ -31,7 +31,7 @@ class _ChartsState extends State<Charts> {
                   });
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Image.asset(
@@ -39,7 +39,7 @@ class _ChartsState extends State<Charts> {
                     width: 150,
                     height: 180,
                   ),
-                  Text('global')
+                  const Text('global')
                 ],
               ),
             ),
@@ -57,7 +57,7 @@ class _ChartsState extends State<Charts> {
                   });
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Image.asset(
@@ -65,7 +65,7 @@ class _ChartsState extends State<Charts> {
                     width: 150,
                     height: 180,
                   ),
-                  Text('vietnam')
+                  const Text('vietnam')
                 ],
               ),
             ),
@@ -83,7 +83,7 @@ class _ChartsState extends State<Charts> {
                   });
             },
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   Image.asset(
@@ -91,7 +91,7 @@ class _ChartsState extends State<Charts> {
                     width: 150,
                     height: 180,
                   ),
-                  Text('korean')
+                  const Text('korean')
                 ],
               ),
             ),

@@ -67,7 +67,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
 
     } catch (e) {
       // Catch load errors: 404, invalid url...
-      print("Error123 loading audio source: $e");
+      log("Error loading audio source: $e");
       showDialog(
           context: context,
           builder: (context) {
@@ -150,6 +150,9 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                 child: TextFormField(
                   onFieldSubmitted: (value) async {
                     await searchState.queryYoutubeApi(searchText.text, context);
+                           setState(() {
+                                    isLoadedSoure = false;
+                          });
                   },
                   controller: searchText,
                   decoration: InputDecoration(
@@ -190,14 +193,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () async {
-                                  print('play index $index');
-                                  log('inmdex ${state.currentIndex}');
-
-                                  log('source $isLoadedSoure');
-                                  searchState.playSong();
-                                  // Instances.player.play();
+                                searchState.playSong();
                                   if (isLoadedSoure) {
-                                    log('run after loaded source');
                                     await Instances.player
                                         .seek(Duration.zero, index: index);
                                     await Instances.player.play();
@@ -213,13 +210,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                   setState(() {
                                     isLoadedSoure = true;
                                   });
-                                  log('========');
-                                  log('${Instances.player.playerState}');
-                                  log('========');
-                                  // await Instances.player
-                                  //     .seek(Duration.zero, index: index);
-                                  // await Instances.player.play();
-                                },
+                               },
                                 child: Material(
                                   color: Colors.transparent,
                                   child: ListTile(
