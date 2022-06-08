@@ -3,7 +3,8 @@ import 'package:music_mp3_app/config/theme/app_theme.dart';
 
 class HeaderPlayingSong extends StatelessWidget {
   final VoidCallback onTap;
-  const HeaderPlayingSong({Key? key, required this.onTap}) : super(key: key);
+  final VoidCallback setTimer;
+  const HeaderPlayingSong({Key? key, required this.onTap, required this.setTimer}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class HeaderPlayingSong extends StatelessWidget {
           style: AppTheme.headLine1,
         ),
         IconButton(
-          onPressed: () {},
+          onPressed:setTimer,
           icon:  Icon(Icons.alarm,color: AppTheme.backgroundColor),
         )
       ],

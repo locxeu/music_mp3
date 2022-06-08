@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_mp3_app/config/theme/image_path.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/provider/baseState.dart';
 import 'dart:developer';
@@ -175,7 +176,7 @@ notifyListeners();
         showDialog(
           context: context,
           builder: (context) {
-            return CustomDialogBox( title: 'Sorry', descriptions: e.toString(), text: 'OK');
+            return CustomDialogBox( title: 'Sorry', descriptions: e.toString(), text: 'OK',imageFile: Images.error);
           });
      setDoneLoading(context);
    }

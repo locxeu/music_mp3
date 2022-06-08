@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
+import 'package:music_mp3_app/config/theme/image_path.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/testDetailSong.dart';
 import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
@@ -111,7 +112,7 @@ class _LocalPageState extends State<LocalPage> {
              showDialog(
           context: context,
           builder: (context) {
-            return CustomDialogBox( title: 'Oh Sorry', descriptions: 'No song were found'.toString(), text: 'OK',);
+            return CustomDialogBox( title: 'Oh Sorry', descriptions: 'No song were found'.toString(), text: 'OK',imageFile: Images.error,);
           });
       }
       return;
@@ -121,7 +122,7 @@ class _LocalPageState extends State<LocalPage> {
       showDialog(
           context: context,
           builder: (context) {
-            return CustomDialogBox( title: 'ALERT', descriptions: e.toString(), text: 'OK',);
+            return CustomDialogBox( title: 'ALERT', descriptions: e.toString(), text: 'OK',imageFile: Images.error);
           });
     }
   }
