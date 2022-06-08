@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
-import 'package:music_mp3_app/custom_message/awsome_snack_bar.dart';
-import 'package:music_mp3_app/custom_message/content_type.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/testDetailSong.dart';
 import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
@@ -48,15 +46,12 @@ class _LocalPageState extends State<LocalPage> {
       listLocalSong = value;
       print('b $listLocalSong');
       if(listLocalSong.isEmpty){
-        showDialog(
+           showDialog(
           context: context,
           builder: (context) {
-            return AwesomeSnackbarContent(
-              title: 'On Sorry!',
-              message: 'No Song Were Found!',
-              contentType: ContentType.failure,
-            );
+            return CustomDialogBox( title: 'Sorry', descriptions: 'No Song were found!!!'.toString(), text: 'OK');
           });
+          return;
       }
       for (var i = 0; i < listLocalSong.length; i++) {
         localAudioSource.add(
@@ -112,7 +107,8 @@ class _LocalPageState extends State<LocalPage> {
           builder: (context) {
             return CustomDialogBox( title: 'Oh Sorry', descriptions: 'No song were found'.toString(), text: 'OK',);
           });
-          }
+      }
+      return;
     } catch (e) {
       // Catch load errors: 404, invalid url...
       print("Error loading audio source: $e");
