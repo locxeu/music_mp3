@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:audio_session/audio_session.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -150,26 +151,15 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                 child: TextFormField(
                   onFieldSubmitted: (value) async {
                     await searchState.queryYoutubeApi(searchText.text, context);
-                           setState(() {
-                                    isLoadedSoure = false;
-                          });
+                    setState(() {
+                      isLoadedSoure = false;
+                    });
                   },
                   controller: searchText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     icon: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: GestureDetector(
-                          onTap: () async {
-                            // print('searchText ${searchText.text}');
-                            // await searchState.queryYoutubeApi(
-                            //     searchText.text, context);
-                            //  playListSong = await compute(
-                            //                                   testaudio, searchState.listSong1,);
-                            // testaudio(searchState.listSong1);
-                            // print('_playlist ${_playlist.toString()}');
-                            //  await _init();
-                          },
-                          child: const Icon(Icons.search)),
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(Icons.search),
                     ),
                     border: InputBorder.none,
                     hintText: 'Nghệ sĩ, bài hát,...',
@@ -193,7 +183,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () async {
-                                searchState.playSong();
+                                  searchState.playSong();
                                   if (isLoadedSoure) {
                                     await Instances.player
                                         .seek(Duration.zero, index: index);
@@ -210,30 +200,44 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                   setState(() {
                                     isLoadedSoure = true;
                                   });
-                               },
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: ListTile(
-                                    tileColor: index == state.currentIndex
-                                        ? Colors.grey.shade800
-                                        : null,
-                                    leading: CircleAvatar(
-                                      radius: 50,
-                                      backgroundImage: NetworkImage(searchState
-                                          .listSong1[index]['thumbnail']),
+                                },
+                                child: Card(
+                                  color: const Color.fromRGBO(0, 0, 0, 0),
+                                  child: Material(
+                                    color: const Color.fromRGBO(0, 0, 0, 0),
+                                    child: ListTile(
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      tileColor: index == state.currentIndex
+                                          ? Colors.grey.shade800
+                                          : null,
+                                      leading: SizedBox(
+                                        // width: 80,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: CachedNetworkImage(
+                                            imageUrl: searchState.listSong1[index]
+                                                ['thumbnail'],
+                                                height: 50,
+                                                width: 50,
+                                                fit: BoxFit.cover,
+                                                placeholder: (context,url)=>Container(color: Colors.black12,),
+                                          ),
+                                        ),
+                                      ),
+                                      title: SizedBox(
+                                          width: context.width * 0.7,
+                                          child: Text(
+                                            searchState.listSong1[index]['title'],
+                                            style: AppTheme.headLine2,
+                                            maxLines: 1,
+                                          )),
+                                      subtitle: Text(
+                                          searchState.listSong1[index]
+                                              ['duration'],
+                                          style: AppTheme.headLine5),
+                                      // trailing: Icon(Icons.h_plus_mobiledata),
                                     ),
-                                    title: SizedBox(
-                                        width: context.width * 0.7,
-                                        child: Text(
-                                          searchState.listSong1[index]['title'],
-                                          style: AppTheme.headLine2,
-                                          maxLines: 1,
-                                        )),
-                                    subtitle: Text(
-                                        searchState.listSong1[index]
-                                            ['duration'],
-                                        style: AppTheme.headLine5),
-                                    // trailing: Icon(Icons.h_plus_mobiledata),
                                   ),
                                 ),
                               );
