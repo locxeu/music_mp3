@@ -33,7 +33,7 @@ class _LocalPageState extends State<LocalPage> {
           Instances.player.durationStream,
           (position, bufferedPosition, duration) => PositionData(
               position, bufferedPosition, duration ?? Duration.zero));
-  Future<List<SongModel>> test() async {
+  Future<List<SongModel>> queryLocalSong() async {
     return _audioQuery.querySongs(
         sortType: null,
         orderType: OrderType.ASC_OR_SMALLER,
@@ -41,17 +41,19 @@ class _LocalPageState extends State<LocalPage> {
         ignoreCase: true);
   }
 
-  ganB() async {
-    await test().then((value) {
+  addToPlayist() async {
+              log('run in addToPlayist funtion');
+
+    await queryLocalSong().then((value) {
       listLocalSong = value;
       print('b $listLocalSong');
       if(listLocalSong.isEmpty){
-           showDialog(
-          context: context,
-          builder: (context) {
-            return CustomDialogBox( title: 'Sorry', descriptions: 'No Song were found!!!'.toString(), text: 'OK');
-          });
-          return;
+          //  showDialog(
+          // context: context,
+          // builder: (context) {
+          //   return CustomDialogBox( title: 'Sorrykkk', descriptions: 'No Song were found!!!'.toString(), text: 'OK');
+          // });
+          // return;
       }
       for (var i = 0; i < listLocalSong.length; i++) {
         localAudioSource.add(
@@ -79,16 +81,20 @@ class _LocalPageState extends State<LocalPage> {
   @override
   void initState() {
     // TODO: implement initState
-    requestPermission();
-    // Instances.player = AudioPlayer();
-    _init();
-    super.initState();
+        super.initState();
+     _load();
+  }
 
-    // ganB();
+  Future<void> _load()async{
+    await  Permission.storage.request();
+    await addToPlayist();
+    await _init();
   }
 
   Future<void> _init() async {
-    await ganB();
+          log('run in init funtion');
+
+    // await addToPlayist();
     // final session = await AudioSession.instance;
     // await session.configure(const AudioSessionConfiguration.speech());
     // Listen to errors during playback.
