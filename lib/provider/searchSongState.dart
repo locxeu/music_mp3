@@ -79,7 +79,8 @@ notifyListeners();
                 album: "Đường về",
                 title: song[index]['title'],
                 artUri: Uri.parse(song[index]['thumbnail']))));
-        Instances.player.setAudioSource(playList[0]);        
+        Instances.player.setAudioSource(playList[0]);    
+        Instances.player.play();
       }
     yt.close();
   }

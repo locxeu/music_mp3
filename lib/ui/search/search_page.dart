@@ -7,12 +7,11 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
-import 'package:music_mp3_app/custom_message/awsome_snack_bar.dart';
-import 'package:music_mp3_app/custom_message/content_type.dart';
 import 'package:music_mp3_app/extension/extension.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/networkSong.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
+import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -29,7 +28,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   late String str;
   var _playlist;
   var playListSong;
-
+  bool isLoadedSoure = false;
   void handleString() {}
   Future<void> _init() async {
     log('init run');
@@ -60,9 +59,10 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     try {
       // Preloading audio is not currently supported on Linux.
       await Instances.player.setAudioSource(_playlist,
-      initialIndex: context.read<SearchSongState>().currentIndexPlaying,
-      
+          initialIndex: context.read<SearchSongState>().currentIndexPlaying,
+          initialPosition: Instances.currentPosition,
           preload: kIsWeb || defaultTargetPlatform != TargetPlatform.linux);
+
       // await  Instances.player.seek(Duration.zero,index:context.read<SearchSongState>().currentIndexPlaying);
 
     } catch (e) {
@@ -71,10 +71,10 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
       showDialog(
           context: context,
           builder: (context) {
-            return AwesomeSnackbarContent(
-              title: 'On Sorry!',
-              message: 'Error loading audio source: $e!',
-              contentType: ContentType.failure,
+            return CustomDialogBox(
+              title: 'ALERT',
+              descriptions: e.toString(),
+              text: 'OK',
             );
           });
     }
@@ -128,6 +128,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    print(isLoadedSoure);
     return Consumer<SearchSongState>(builder: (_, searchState, __) {
       return searchState.isPlaying
           ? NetworkSong(
@@ -147,9 +148,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                     color: AppTheme.backgroundColor,
                     borderRadius: BorderRadius.circular(10)),
                 child: TextFormField(
-                  onFieldSubmitted: (value)async{
-                    await searchState.queryYoutubeApi(
-                                searchText.text, context);
+                  onFieldSubmitted: (value) async {
+                    await searchState.queryYoutubeApi(searchText.text, context);
                   },
                   controller: searchText,
                   decoration: InputDecoration(
@@ -160,8 +160,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                             // print('searchText ${searchText.text}');
                             // await searchState.queryYoutubeApi(
                             //     searchText.text, context);
-    //  playListSong = await compute(
-    //                                   testaudio, searchState.listSong1,);
+                            //  playListSong = await compute(
+                            //                                   testaudio, searchState.listSong1,);
                             // testaudio(searchState.listSong1);
                             // print('_playlist ${_playlist.toString()}');
                             //  await _init();
@@ -192,29 +192,33 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                 onTap: () async {
                                   print('play index $index');
                                   log('inmdex ${state.currentIndex}');
-                                  log('data ${state.toString()}');
-      
+
+                                  log('source $isLoadedSoure');
                                   searchState.playSong();
+                                  // Instances.player.play();
+                                  if (isLoadedSoure) {
+                                    log('run after loaded source');
+                                    await Instances.player
+                                        .seek(Duration.zero, index: index);
+                                    await Instances.player.play();
+                                    return;
+                                  }
                                   await searchState.getAudio(
                                       searchState.listSong1, index);
-                            playListSong = await compute(
-                                      testaudio, searchState.listSong1,);
+                                  playListSong = await compute(
+                                    testaudio,
+                                    searchState.listSong1,
+                                  );
                                   await _init();
+                                  setState(() {
+                                    isLoadedSoure = true;
+                                  });
                                   log('========');
                                   log('${Instances.player.playerState}');
                                   log('========');
                                   // await Instances.player
                                   //     .seek(Duration.zero, index: index);
                                   // await Instances.player.play();
-
-                                  // searchState.getCurrentIndex(index);
-                                  //               Navigator.push(
-                                  //                 context,
-                                  //                 MaterialPageRoute(
-                                  //                     builder: (context) => ChangeNotifierProvider(
-                                  // create: (context) => SearchSongState(),
-                                  // builder: (context, child) =>  NetworkSong(listAudio: playList,index: index,))),
-                                  //               );
                                 },
                                 child: Material(
                                   color: Colors.transparent,

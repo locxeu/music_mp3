@@ -260,6 +260,7 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
                 stream: _positionDataStream,
                 builder: (context, snapshot) {
                   final positionData = snapshot.data;
+                  Instances.currentPosition= positionData?.position ?? Duration.zero;
                   return SeekBar(
                     duration: positionData?.duration ?? Duration.zero,
                     position: positionData?.position ?? Duration.zero,
@@ -269,6 +270,13 @@ class NetworkSongState extends State<NetworkSong> with WidgetsBindingObserver,Si
                       Instances.player.seek(newPosition);
                     },
                   );
+                },
+              ),
+              Text(  Instances.currentPosition.toString(),style: AppTheme.headLine3),
+              StreamBuilder<PositionData>(
+                stream: _positionDataStream,
+                builder: (context, snapshot) {
+                return Text(snapshot.data?.position.toString()??'00',style: AppTheme.headLine3,);
                 },
               ),
               const SizedBox(height: 8.0),
