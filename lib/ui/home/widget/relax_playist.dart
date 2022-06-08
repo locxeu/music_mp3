@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/config/theme/image_path.dart';
-import 'package:music_mp3_app/database/relax_song_db/coffe.dart';
-import 'package:music_mp3_app/database/relax_song_db/piano.dart';
-import 'package:music_mp3_app/networkSong.dart';
 
 class RelaxPlayist extends StatefulWidget {
   const RelaxPlayist({Key? key}) : super(key: key);
@@ -21,63 +18,43 @@ class _RelaxPlayistState extends State<RelaxPlayist> {
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         children: [
-          InkWell(
-            onTap: () {
-                Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NetworkSong(listAudio: coffePlayist,)),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  Image.asset(
-                    Images.coffe,
-                    width: 150,
-                    height: 180,
-                  ),
-                  Text('Coffe',style: AppTheme.headLine4,)
-                ],
-              ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                Image.asset(
+                  Images.coffe,
+                  width: 150,
+                  height: 180,
+                ),
+                Text('Coffe',style: AppTheme.headLine4,)
+              ],
             ),
           ),
-          InkWell(
-            onTap: () {
-               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NetworkSong(listAudio: piano,)),
-              );
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  Image.asset(
-                    Images.piano,
-                    width: 150,
-                    height: 180,
-                  ),
-                 Text('Piano',style: AppTheme.headLine4,)
-                ],
-              ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                Image.asset(
+                  Images.piano,
+                  width: 150,
+                  height: 180,
+                ),
+               Text('Piano',style: AppTheme.headLine4,)
+              ],
             ),
           ),
-          InkWell(
-            onTap: () {
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  Image.asset(
-                    Images.meditation,
-                    width: 150,
-                    height: 180,
-                  ),
-                 Text('Meditation',style: AppTheme.headLine4,)
-                ],
-              ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                Image.asset(
+                  Images.meditation,
+                  width: 150,
+                  height: 180,
+                ),
+               Text('Meditation',style: AppTheme.headLine4,)
+              ],
             ),
           )
         ],

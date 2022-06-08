@@ -4,6 +4,7 @@ import 'package:music_mp3_app/ui/splash_screen.dart';
 
 
 Future<void> main()async {
+   WidgetsFlutterBinding.ensureInitialized();
    await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
