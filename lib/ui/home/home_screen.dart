@@ -34,75 +34,125 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.notifications,
                 color: Colors.white,
               ),
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: SizedBox(
-                height: 200,
-                child: Column(
-                  children: [
-                    const Text('enter'),
-                    Row(
-                      children:   [
-                        Expanded(
-                            child: Container(
-                              width: 100,
-                              height: 80,
-                              decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                         borderRadius: BorderRadius.circular(10)
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: SingleChildScrollView(
+                              child: SizedBox(
+                                height: 200,
+                                child: Column(
+                                  children: [
+                                    const Text('enter'),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            child: Container(
+                                          width: 100,
+                                          height: 80,
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: const TextField(
+                                            decoration: InputDecoration(
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 30,
+                                                        horizontal: 15),
+                                                border: InputBorder.none,
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255, 197, 63, 209),
+                                                      width: 1.0),
+                                                ),
+                                                fillColor: Colors.red),
+                                          ),
+                                        )),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        const Text(':'),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                            child: Container(
+                                          width: 100,
+                                          height: 80,
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: const TextField(
+                                            decoration: InputDecoration(
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 30,
+                                                        horizontal: 15),
+                                                border: InputBorder.none,
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Color.fromARGB(
+                                                          255, 197, 63, 209),
+                                                      width: 1.0),
+                                                ),
+                                                fillColor: Colors.red),
+                                          ),
+                                        )),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Hours',
+                                          style: TextStyle(
+                                              color: AppTheme.subTitle,
+                                              fontSize: 17),
+                                        ),
+                                        const SizedBox(
+                                          width: 80,
+                                        ),
+                                        Text('Minutes',
+                                            style: TextStyle(
+                                                color: AppTheme.subTitle,
+                                                fontSize: 20))
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Colors.grey.shade100, // background
+                                             onPrimary: const Color.fromARGB(
+                                                          255, 197, 63, 209),   // foreground           
+                                            ),
+                                            onPressed: () {},
+                                            child: const Text('Cancel')),
+                                            ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Colors.grey.shade100, // background
+                                             onPrimary: const Color.fromARGB(
+                                                          255, 197, 63, 209),    // foreground           
+                                            ),
+                                            onPressed: () {},
+                                            child: const Text('Ok')),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
-                              child: const TextField(
-                          decoration: InputDecoration(
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 197, 63, 209), width: 1.0),
-                              ),
-                              fillColor: Colors.red
-                          ),
-                        ),
-                            )),
-                            const SizedBox(
-                              width: 10,
                             ),
-                        const Text(':'),
-                        const SizedBox(
-                              width: 10,
-                            ),
-                         Expanded(
-                            child: Container(
-                              width: 100,
-                                  height: 80,
-                              decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                         borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: const TextField(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 30,horizontal: 15),
-                            border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 197, 63, 209), width: 1.0),
-                              ),
-                              fillColor: Colors.red
-                          ),
-                        ),
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
+                          );
+                        });
                   },
                   child: const Icon(
                     Icons.timer,
