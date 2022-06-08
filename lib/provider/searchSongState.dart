@@ -68,7 +68,7 @@ notifyListeners();
 
       Future<void> getAudio(List<dynamic> song,int index) async {
     var yt = YoutubeExplode();
-
+      currentIndexPlaying=index;
       var streamInfo = await yt.videos.streamsClient.getManifest(song[index]['id']);
       if (streamInfo.audioOnly.isNotEmpty) {
         StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();

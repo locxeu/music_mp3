@@ -60,7 +60,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     try {
       // Preloading audio is not currently supported on Linux.
       await Instances.player.setAudioSource(_playlist,
-          initialIndex: context.read<SearchSongState>().currentIndexPlaying,
+      initialIndex: context.read<SearchSongState>().currentIndexPlaying,
+      
           preload: kIsWeb || defaultTargetPlatform != TargetPlatform.linux);
       // await  Instances.player.seek(Duration.zero,index:context.read<SearchSongState>().currentIndexPlaying);
 
@@ -146,16 +147,21 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                     color: AppTheme.backgroundColor,
                     borderRadius: BorderRadius.circular(10)),
                 child: TextFormField(
+                  onFieldSubmitted: (value)async{
+                    await searchState.queryYoutubeApi(
+                                searchText.text, context);
+                  },
                   controller: searchText,
                   decoration: InputDecoration(
                     icon: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: GestureDetector(
                           onTap: () async {
-                            print('searchText ${searchText.text}');
-                            await searchState.queryYoutubeApi(
-                                searchText.text, context);
-
+                            // print('searchText ${searchText.text}');
+                            // await searchState.queryYoutubeApi(
+                            //     searchText.text, context);
+    //  playListSong = await compute(
+    //                                   testaudio, searchState.listSong1,);
                             // testaudio(searchState.listSong1);
                             // print('_playlist ${_playlist.toString()}');
                             //  await _init();
@@ -187,12 +193,12 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                   print('play index $index');
                                   log('inmdex ${state.currentIndex}');
                                   log('data ${state.toString()}');
-
+      
                                   searchState.playSong();
                                   await searchState.getAudio(
                                       searchState.listSong1, index);
-                                  playListSong = await compute(
-                                      testaudio, searchState.listSong1);
+                            playListSong = await compute(
+                                      testaudio, searchState.listSong1,);
                                   await _init();
                                   log('========');
                                   log('${Instances.player.playerState}');
