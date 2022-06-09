@@ -151,10 +151,15 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                     borderRadius: BorderRadius.circular(10)),
                 child: TextFormField(
                   onFieldSubmitted: (value) async {
-                    await searchState.queryYoutubeApi(searchText.text, context);
-                           setState(() {
-                                    isLoadedSoure = false;
-                          });
+                    print('run');
+                var result=  await searchState.getRawAudioUrl();
+                // log('result $result');
+                await searchState.getAudioUrl(result);
+
+                    // await searchState.queryYoutubeApi(searchText.text, context);
+                    //        setState(() {
+                    //                 isLoadedSoure = false;
+                    //       });
                   },
                   controller: searchText,
                   decoration: InputDecoration(

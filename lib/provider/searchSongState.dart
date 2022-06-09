@@ -24,6 +24,7 @@ class SearchSongState extends BaseState {
     List<AudioSource> playList = [];
 
   String api = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vcmVzdWx0cz9zZWFyY2hfcXVlcnk9';
+  String urlBase='aHR0cHM6Ly93d3cueW91dHViZS5jb20=';
   playSong(){
     isPlaying=!isPlaying;
     log('message');
@@ -185,6 +186,219 @@ notifyListeners();
     notifyListeners();
 
  }
+  
+  
   getDuration(List test) {}
 
+  getRawAudioUrl()async {
+    log('raw api ${decode('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0=')+'d9edJZFVSN4'}');
+   String result = await searchSongRepo.search(decode('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0=')+'fBN1V2gPzHI');
+    return result;
+  }
+//get url audio raw 
+getAudioUrl(String str)async{
+  List<String> arrCheckSpecChar = ["\\", "\\\\"];
+        String specChar = "";
+        String typeVid = "\":140";
+                    log("typeVid $typeVid");
+
+       List<String> endJsonArr = ["}"];
+         int startJsonIdx = str.indexOf("{" + specChar + "\"itag" + specChar + typeVid);
+            log("startJsonIdx $startJsonIdx");
+                if (startJsonIdx == -1) {
+           log("itag change structure!!!");
+           log("itag index:${str.indexOf("itag")}");
+
+            if(!str.contains("itag")) {
+              return "Error";
+            }
+           log(str.substring(str.indexOf("itag") - 20,str.indexOf("itag") + 20));
+            for (int i = 0; i < arrCheckSpecChar.length; i++) {
+                specChar = arrCheckSpecChar[i];
+                startJsonIdx = str.indexOf("{" + specChar + "\"itag" + specChar + typeVid);
+                if (startJsonIdx != -1) {
+                  break;
+                }
+            }
+        }
+                     //========//
+
+             if(startJsonIdx == -1) {
+               return "Error";
+             }
+             //========//
+        String newStr = str.substring(startJsonIdx, startJsonIdx + 5000);
+        // 5000 là cái đầu buồi gì ????
+log('newStr $newStr');
+        int indexUrl = newStr.indexOf("url");
+        int endJsonIdx = newStr.indexOf(endJsonArr[0]);
+        log('endJsonIdx $endJsonIdx');
+         log('indexUrl $indexUrl');
+        if(endJsonIdx < indexUrl){ // trước khi có link url
+            endJsonIdx = newStr.indexOf(endJsonArr[0],indexUrl);
+        }
+             //========//
+        while (true) {
+          log('run while');
+
+            if (newStr[endJsonIdx] == '}' || newStr[endJsonIdx] == '"' || newStr[endJsonIdx] == '\\' || newStr[endJsonIdx] == ']' || newStr[endJsonIdx] == ',') {
+              endJsonIdx--;
+            } else {
+                endJsonIdx++; // trả ký tự cuối
+                break;
+            }
+        }
+
+          String strData = newStr.substring(0, endJsonIdx);
+log('strData $strData');
+
+        int idxSigCipher = strData.indexOf("signatureCipher");
+        String urlDecode = "";
+        String ytbUrl = "";
+
+             if (idxSigCipher == -1) {
+            urlDecode = (strData.substring(strData.indexOf("http"), strData.indexOf("\",\"")));
+              log('urlDecode gan lan 1 $urlDecode');
+            urlDecode = urlDecode.replaceAll("\\u0026", "&");
+              log('urlDecode gan lan 2 $urlDecode');
+
+            ytbUrl = urlDecode;
+            log('ytbUrl $ytbUrl');
+
+        }else{
+                log("dataURl: $strData");
+            String strDataSigCipher = strData.substring(idxSigCipher, strData.length);
+            String signature = strDataSigCipher.substring(strDataSigCipher.indexOf("=") + 1, strDataSigCipher.indexOf(specChar + "\\u0026"));
+            String keySig = strData.substring(strData.indexOf("sp="), strData.indexOf(specChar + "\\u0026url"));
+
+            urlDecode = strData.substring(strData.indexOf("url=") + 4, strData.length);
+            signature = Uri.decodeFull(signature);
+            keySig = keySig.substring(3, keySig.length); //= keySig.slice(3);
+
+            urlDecode = Uri.decodeFull(Uri.decodeFull(Uri.decodeFull(urlDecode)));
+
+//            urlDecode = urlDecode.replaceAll("\\\\", "");
+            urlDecode = urlDecode.replaceAll("\\\\", "");
+
+            //"/\\\\/"
+
+            int idx = str.indexOf("base.js");
+            String tempBase = str.substring(idx - 100, idx + 7);
+            specChar = "";
+            int idxStartBase = tempBase.indexOf(specChar + "/s" + specChar + "/player" + specChar + "/");
+
+            if (idxStartBase == -1) {
+               log("basejs change structure!!!");
+                for (int i = 0; i < arrCheckSpecChar.length; i++) {
+                    specChar = arrCheckSpecChar[i];
+                    idxStartBase = tempBase.indexOf(specChar + "/s" + specChar + "/player" + specChar + "/");
+                    if (startJsonIdx != -1) {
+                      break;
+                    }
+                }
+            }
+
+//            Log.d("idxStartBase", idxStartBase + " - " + tempBase.length() + "");
+            String baseLink = tempBase.substring(idxStartBase, tempBase.length);
+            baseLink = baseLink.replaceAll("/\\/", "");
+
+            baseLink = decode(urlBase) + baseLink;
+
+           log("urlDecode: $urlDecode "  );
+           log("signature: $signature" );
+           log("keySig: $keySig"  );
+           log("baseLink: $baseLink" );
+
+            String baseData =await searchSongRepo.search(baseLink);
+            String sigAfter = handleFunctionBase(baseData, signature);
+
+            ytbUrl = urlDecode + "&" + keySig + "=" + sigAfter;
+        }
+          return ytbUrl;
+}
+
+handleFunctionBase(String str, String signature){
+      String dataText = str;
+
+        String txtReverse = "function(a){a.reverse()";
+        String txtSplice = "function(a,b){a.splice(0,b)}";
+        String txtSwap = "function(a,b){var c=a[0];a[0]=a[b%a.length];a[b%a.length]=c}";
+        String txtMain1 = "function(a){a=a.split(\"\");";
+        String txtMain2 = "return a.join(\"\")};";
+
+        int idxMain = 0;
+        String charReverse = "", charSplice = "", charSwap = "";
+
+        List<String> lines = dataText.split("\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains(txtMain1) && lines[i].contains(txtMain2)) {
+                idxMain = i;
+            }
+            if (lines[i].contains(txtReverse)) {
+                charReverse = lines[i].substring(lines[i].indexOf(txtReverse) - 3, lines[i].indexOf(txtReverse) - 1);
+            }
+            if (lines[i].contains(txtSplice)) {
+                charSplice = lines[i].substring(lines[i].indexOf(txtSplice) - 3, lines[i].indexOf(txtSplice) - 1);
+            }
+            if (lines[i].contains(txtSwap)) {
+                charSwap = lines[i].substring(lines[i].indexOf(txtSwap) - 3, lines[i].indexOf(txtSwap) - 1);
+            }
+        }
+
+        try{
+            List<String>linesMain = lines[idxMain].split(";");
+            for (int i = 0; i < linesMain.length; i++) {
+
+                if (linesMain[i].contains(charReverse)) {
+                    String numStr = linesMain[i].substring(linesMain[i].indexOf("("), linesMain[i].indexOf(")"));
+                    signature = handleString(signature, "reverse", numStr.replaceAll("[\\D]", ""));
+                }
+                if (linesMain[i].contains(charSplice)) {
+                    String numStr = linesMain[i].substring(linesMain[i].indexOf("("), linesMain[i].indexOf(")"));
+                    signature = handleString(signature, "splice", numStr.replaceAll("[\\D]", ""));
+                }
+                if (linesMain[i].contains(charSwap)) {
+                    String numStr = linesMain[i].substring(linesMain[i].indexOf("("), linesMain[i].indexOf(")"));
+                    signature = handleString(signature, "swap", numStr.replaceAll("[\\D]", ""));
+                }
+
+            }
+        }catch(e){
+           log("Exception handleFunctionBase ${ e.toString()}" );
+        }
+
+//             System.out.println("sig after: " + signature);
+        return signature;
+}
+
+handleString(String str, String type, String idx) {
+
+        if(idx=="") {
+          return str;
+        }
+        int index = int.parse(idx);
+
+        if (type == "reverse") {
+
+            return StringBuffer(str).toString().split('').reversed.join();
+        } else if (type == "splice") {
+            if (index + 1 < str.length) {
+              return str.substring(index, str.length);
+            } // || index+1
+
+        } else if (type == "swap") {
+
+            if (index < str.length) {
+                // StringBuilder s = StringBuilder(str);
+                // char l = s.charAt(0) , r = s.charAt(index);
+                // s.setCharAt(0,r);
+                // s.setCharAt(index,l);
+                // return s.toString();
+
+            }
+        }
+
+        return str;
+    }
 }
