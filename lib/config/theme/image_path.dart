@@ -18,6 +18,10 @@ class Images {
   static const String search = 'assets/images/bottom_bar/search.svg';
   static const String sdcard = 'assets/images/bottom_bar/sd-card.svg';
 
+//Show dialog
+  static const String timer = 'assets/images/timer-icon.png';
+  static const String error = 'assets/images/cancel.png';
+
   static final Images _instance = Images._internal();
 
   factory Images(){

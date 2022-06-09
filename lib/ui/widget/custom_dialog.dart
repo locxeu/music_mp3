@@ -5,8 +5,8 @@ import 'package:music_mp3_app/config/theme/app_theme.dart';
 
 class CustomDialogBox extends StatefulWidget {
   final String title, descriptions, text;
-
-  const CustomDialogBox({ Key? key, required this.title, required this.descriptions, required this.text}) : super(key: key);
+  final String imageFile;
+  const CustomDialogBox({ Key? key, required this.title, required this.descriptions, required this.text, required this.imageFile}) : super(key: key);
 
   @override
   _CustomDialogBoxState createState() => _CustomDialogBoxState();
@@ -68,7 +68,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
               radius:AppTheme.avatarRadius,
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(AppTheme.avatarRadius)),
-                  child: Image.asset("assets/images/cancel.png",width: 50,)
+                  child: Image.asset(widget.imageFile,width: 50,)
               ),
             ),
         ),

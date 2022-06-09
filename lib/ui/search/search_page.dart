@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
+import 'package:music_mp3_app/config/theme/image_path.dart';
 import 'package:music_mp3_app/extension/extension.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/networkSong.dart';
@@ -75,6 +76,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
               title: 'ALERT',
               descriptions: e.toString(),
               text: 'OK',
+              imageFile: Images.error
             );
           });
     }

@@ -3,7 +3,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/controlButton.dart';
-import 'package:music_mp3_app/ui/widget/header_detail_playing.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'extension/extension.dart';
 class DetailSong2 extends StatefulWidget {
@@ -56,7 +55,7 @@ class _DetailSong2State extends State<DetailSong2>
             const SizedBox(
               height: 40,
             ),
-            HeaderPlayingSong(onTap: widget.onTap,),
+            // HeaderPlayingSong(onTap: widget.onTap,),
              SizedBox(
               height: context.height*0.08,
             ),
