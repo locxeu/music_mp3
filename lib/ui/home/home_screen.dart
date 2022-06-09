@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/config/theme/image_path.dart';
+import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/ui/home/widget/artist.dart';
 import 'package:music_mp3_app/ui/home/widget/chart.dart';
 import 'package:music_mp3_app/ui/home/widget/relax_playist.dart';
@@ -14,6 +19,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController hours =TextEditingController();
+  final TextEditingController minutes =TextEditingController();
+     int endTime = DateTime.now().millisecondsSinceEpoch ;
+          CountdownTimerController controller= CountdownTimerController(endTime: DateTime.now().millisecondsSinceEpoch);
+
+num duration=0;
+@override
+  void initState() {
+    // TODO: implement initState
+    log('endTime $endTime');
+
+    super.initState();
+  }
+  void onEnd(){
+   Instances.player.pause();
+  }
+  void getTimeToStop(int hour,int minute){
+      duration= (hour*60*60+minute*60)*1000;
+      endTime=endTime+duration as int;
+      log('duration $duration');
+      log('endTime $endTime');
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Row(
             children: [
+             
               Expanded(
                   child: Text(
                 'Mới phát gần ...',
@@ -58,8 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color: Colors.grey.shade100,
                                               borderRadius:
                                                   BorderRadius.circular(10)),
-                                          child: const TextField(
-                                            decoration: InputDecoration(
+                                          child:  TextField(
+                                            controller: hours,
+                                            decoration: const InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.symmetric(
                                                         vertical: 30,
@@ -90,8 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color: Colors.grey.shade100,
                                               borderRadius:
                                                   BorderRadius.circular(10)),
-                                          child: const TextField(
-                                            decoration: InputDecoration(
+                                          child:  TextField(
+                                            controller: minutes,
+                                            decoration: const InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.symmetric(
                                                         vertical: 30,
@@ -143,7 +173,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                              onPrimary: const Color.fromARGB(
                                                           255, 197, 63, 209),    // foreground           
                                             ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              setState(() {
+                                                  getTimeToStop(int.parse(hours.text),int.parse(minutes.text));
+                                                   controller = CountdownTimerController(endTime: endTime, onEnd: onEnd);
+                                              });
+                                              log('hours ${hours.text}');
+                                               log('hours ${minutes.text}');
+                                         // controller.start();
+                                            },
                                             child: const Text('Ok')),
                                       ],
                                     )
@@ -168,6 +206,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(
             height: 24,
+          ),
+            CountdownTimer(
+              controller: controller,
+              onEnd: onEnd,
+              endTime: endTime,
           ),
           Expanded(
               child: SingleChildScrollView(
