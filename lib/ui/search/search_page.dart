@@ -86,19 +86,21 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     List<AudioSource> playList = [];
     var yt = YoutubeExplode();
     for (int i = 0; i < song.length; i++) {
-      var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
+      var result=  await SearchSongState().getRawAudioUrl(song[i]['id']);
+       var  urlVideo = await SearchSongState().getAudioUrl(result);
+      // var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
 
-      if (streamInfo.audioOnly.isNotEmpty) {
-        StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
-        print('$i ${streamInfo1.url}');
-        playList.add(AudioSource.uri(streamInfo1.url,
+      // if (streamInfo.audioOnly.isNotEmpty) {
+      //   StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
+        print('$i $urlVideo');
+        playList.add(AudioSource.uri(Uri.parse(urlVideo),
             tag: MediaItem(
                 id: i.toString(),
                 album: "Đường về",
                 title: song[i]['title'],
                 artUri: Uri.parse(song[i]['thumbnail']))));
-        var stream = yt.videos.streamsClient.get(streamInfo1);
-      }
+      //   var stream = yt.videos.streamsClient.get(streamInfo1);
+      // }
     }
     yt.close();
     return playList;
@@ -155,6 +157,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                            setState(() {
                                     isLoadedSoure = false;
                           });
+
                   },
                   controller: searchText,
                   decoration: InputDecoration(
@@ -204,6 +207,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                   }
                                   await searchState.getAudio(
                                       searchState.listSong1, index);
+                                      // playListSong=await testaudio( searchState.listSong1,);
                                   playListSong = await compute(
                                     testaudio,
                                     searchState.listSong1,
