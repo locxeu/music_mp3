@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/config/theme/image_path.dart';
+import 'package:music_mp3_app/config/values/app_api.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/provider/baseState.dart';
 import 'dart:developer';
@@ -93,7 +94,7 @@ class SearchSongState extends BaseState {
   Future<dynamic> queryYoutubeApi(String searchText, context) async {
     setLoading(context);
     try {
-      var result = await searchSongRepo.search(decode(api) + searchText);
+      var result = await searchSongRepo.search(decode(AppApi().urlSearch) + searchText);
       result = trimString(result);
       var listItems = [];
       final data = jsonDecode(result);
@@ -201,10 +202,10 @@ class SearchSongState extends BaseState {
 
   getDuration(List test) {}
 
-  getRawAudioUrl() async {
+  getRawAudioUrl(String idVideo) async {
     log('raw api ${decode('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0=') + 'd9edJZFVSN4'}');
     String result = await searchSongRepo.search(
-        decode('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0=') + 'GjLDHcitDnw');
+        decode(AppApi().urlVideo) + idVideo);
     return result;
   }
 
@@ -412,7 +413,7 @@ class SearchSongState extends BaseState {
   }
 
 
-//function to replace one character to another because in Flutter String is imumtabe so String can't be change 
+//function to replace one character in String to another because in Flutter String is imumtabe so String can't be change 
   String replaceCharAt(String oldString, int index, String newChar) {
   return oldString.substring(0, index) + newChar + oldString.substring(index + 1);
 }
