@@ -50,6 +50,9 @@ dependencies:
   provider: ^6.0.0
   marquee: ^2.2.1
   flutter_countdown_timer: ^4.1.0
+  flutter_downloader: ^1.7.4
+  path_provider: ^2.0.9
+  folder_file_saver: ^2.0.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -88,6 +88,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     for (int i = 0; i < song.length; i++) {
       var result=  await SearchSongState().getRawAudioUrl(song[i]['id']);
        var  urlVideo = await SearchSongState().getAudioUrl(result);
+       
       // var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
 
       // if (streamInfo.audioOnly.isNotEmpty) {
@@ -212,6 +213,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                     testaudio,
                                     searchState.listSong1,
                                   );
+                                  searchState.playList=playListSong;
                                   await _init();
                                   setState(() {
                                     isLoadedSoure = true;

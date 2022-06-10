@@ -1,10 +1,14 @@
 import 'dart:developer';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:marquee/marquee.dart';
 import 'package:music_mp3_app/common.dart';
@@ -15,6 +19,8 @@ import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 import 'package:music_mp3_app/ui/widget/header_detail_playing.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'extension/extension.dart';
@@ -32,24 +38,8 @@ class NetworkSongState extends State<NetworkSong>
   var _playlist;
   late AnimationController _controller;
   final int _addedCount = 0;
-  @override
-  void initState() {
-    super.initState();
-    // ambiguate(WidgetsBinding.instance)!.addObserver(this);
-    // Instances.player = Instances.player;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
-    ));
-    // _init();
-    _controller = AnimationController(
-      duration: const Duration(minutes: 6),
-      vsync: this,
-    );
-    if (mounted) {
-      _controller.forward();
-    }
-  }
-
+  int progress = 0;
+   final Dio dio= Dio();
   void setTimer() {
     showDialog(
         context: context,
@@ -62,52 +52,51 @@ class NetworkSongState extends State<NetworkSong>
                   children: [
                     const Text('enter'),
                     Row(
-                      children:   [
+                      children: [
                         Expanded(
                             child: Container(
-                              width: 100,
-                              height: 80,
-                              decoration: BoxDecoration(
+                          width: 100,
+                          height: 80,
+                          decoration: BoxDecoration(
                               color: Colors.grey.shade100,
-                         borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: const TextField(
-                          decoration: InputDecoration(
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 197, 63, 209), width: 1.0),
-                              ),
-                              fillColor: Colors.red
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const TextField(
+                            decoration: InputDecoration(
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 197, 63, 209),
+                                      width: 1.0),
+                                ),
+                                fillColor: Colors.red),
                           ),
+                        )),
+                        const SizedBox(
+                          width: 10,
                         ),
-                            )),
-                            const SizedBox(
-                              width: 10,
-                            ),
                         const Text(':'),
                         const SizedBox(
-                              width: 10,
-                            ),
-                         Expanded(
-                            child: Container(
-                              width: 100,
-                                  height: 80,
-                              decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                         borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: const TextField(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 30,horizontal: 15),
-                            border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 197, 63, 209), width: 1.0),
-                              ),
-                              fillColor: Colors.red
-                          ),
+                          width: 10,
                         ),
-                            )),
+                        Expanded(
+                            child: Container(
+                          width: 100,
+                          height: 80,
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const TextField(
+                            decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 30, horizontal: 15),
+                                border: InputBorder.none,
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 197, 63, 209),
+                                      width: 1.0),
+                                ),
+                                fillColor: Colors.red),
+                          ),
+                        )),
                       ],
                     ),
                   ],
@@ -152,6 +141,114 @@ class NetworkSongState extends State<NetworkSong>
                 imageFile: Images.error);
           });
     }
+  }
+
+ void _downloadAudio()async{
+   log('download');
+     final status = await Permission.storage.request();
+     if(status.isGranted){
+      final baseStorage = await getApplicationSupportDirectory();
+log('baseStorage ${baseStorage.path}');
+      final id = await FlutterDownloader.enqueue(url: 'https://rr2---sn-42u-i5oes.googlevideo.com/videoplayback?expire=1654875696&ei=0BGjYru4M8aOvcAPqfq8wAE&ip=1.55.108.212&id=o-AGJObCJZwzzg_4LL5kb0geIeghJyco-p7A5ihyDjsby0&itag=140&source=youtube&requiressl=yes&mh=VK&mm=31,26&mn=sn-42u-i5oes,sn-oguesn6s&ms=au,onr&mv=m&mvi=2&pcm2cms=yes&pl=24&initcwndbps=2071250&spc=4ocVC4ZsSCuwhQHT1HT0Jo3-3OKT9E0&vprv=1&mime=audio/mp4&ns=oYzl9fO8ENTtWdNQwGrCEGwG&gir=yes&clen=5455652&dur=337.060&lmt=1639904228545548&mt=1654853580&fvip=2&keepalive=yes&fexp=24001373,24007246&c=WEB&txp=5532434&n=2cprQbCou-2ov9g-7p&sparams=expire,ei,ip,id,itag,source,requiressl,spc,vprv,mime,ns,gir,clen,dur,lmt&lsparams=mh,mm,mn,ms,mv,mvi,pcm2cms,pl,initcwndbps&lsig=AG3C_xAwRQIhAOVWNsyh4DNGRoFj29uj4DjsectWQwKHF5zwF4kafEbCAiBeFPw0o3_H7baW85Nte7tBERQUNLzS4oEcoeoeW8MdzA==&sig=AOq0QJ8wRAIgOSMHU_h6chHEEjg62zs6mT5Mndo29Q2O0YVcJoA7iLcCICXJA1FouK_X2IOpa_5Y0GLafaqhUkJ0o16Cvw6KdiGn'
+      , savedDir: baseStorage.path,fileName: 'vutest.mp3',saveInPublicStorage: true,showNotification: true);
+     }else{
+       log('No permission');
+     }
+ }
+// downloadFile()async{
+//   bool download = await saveFile('https://rr2---sn-42u-i5oes.googlevideo.com/videoplayback?expire=1654875696&ei=0BGjYru4M8aOvcAPqfq8wAE&ip=1.55.108.212&id=o-AGJObCJZwzzg_4LL5kb0geIeghJyco-p7A5ihyDjsby0&itag=140&source=youtube&requiressl=yes&mh=VK&mm=31,26&mn=sn-42u-i5oes,sn-oguesn6s&ms=au,onr&mv=m&mvi=2&pcm2cms=yes&pl=24&initcwndbps=2071250&spc=4ocVC4ZsSCuwhQHT1HT0Jo3-3OKT9E0&vprv=1&mime=audio/mp4&ns=oYzl9fO8ENTtWdNQwGrCEGwG&gir=yes&clen=5455652&dur=337.060&lmt=1639904228545548&mt=1654853580&fvip=2&keepalive=yes&fexp=24001373,24007246&c=WEB&txp=5532434&n=2cprQbCou-2ov9g-7p&sparams=expire,ei,ip,id,itag,source,requiressl,spc,vprv,mime,ns,gir,clen,dur,lmt&lsparams=mh,mm,mn,ms,mv,mvi,pcm2cms,pl,initcwndbps&lsig=AG3C_xAwRQIhAOVWNsyh4DNGRoFj29uj4DjsectWQwKHF5zwF4kafEbCAiBeFPw0o3_H7baW85Nte7tBERQUNLzS4oEcoeoeW8MdzA==&sig=AOq0QJ8wRAIgOSMHU_h6chHEEjg62zs6mT5Mndo29Q2O0YVcJoA7iLcCICXJA1FouK_X2IOpa_5Y0GLafaqhUkJ0o16Cvw6KdiGn', 
+//   'buocquamuacodon.mp3');
+//   if(download){
+//     print('download sucess');
+//   }else{
+//   print('download loi');
+
+//   }
+// }
+//   Future<bool> saveFile(String url, String fileName) async {
+//     Directory? directory;
+//     try {
+//       if (Platform.isAndroid) {
+//         if (await _requestPermission(Permission.storage)) {
+//           directory = await getApplicationDocumentsDirectory();
+//           // String newPath='';
+//           // List<String> folders= directory!.path.split('/');
+//           // for(int x=1;x<folders.length;x++){
+//           //   String folder=folders[x];
+//           //   if(folder!="Android"){
+//           //     newPath+='/'+folder;
+//           //   }
+//           //   else{
+//           //     break;
+//           //   }
+//           // }
+//           // newPath=newPath+'/musicApp';
+//           // directory =Directory(newPath);
+//      log('path ${directory.path}');
+//         }
+//       }
+//       if(!await directory!.exists()){
+//         await directory.create(recursive:true);
+//       }
+//       if(await directory.exists()){
+//         File savefile=File(directory.path+'/$fileName');
+//         log('savefile ${savefile.toString()}');
+//        await dio.download(url, savefile.path,onReceiveProgress: (downloaded,totalSize){
+//          setState(() {
+//            progress=downloaded/totalSize*100;
+//          });
+//        });
+//        return true;
+//       }
+//     } catch (e) {
+// print(e);
+//     }
+//     return false;
+//   }
+
+//   Future<bool> _requestPermission(Permission permission) async {
+//     if (await permission.isGranted) {
+//       return true;
+//     } else {
+//       var result = await permission.request();
+//       if (result == PermissionStatus.granted) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     }
+//   }
+
+  ReceivePort receivePort = ReceivePort();
+  @override
+  void initState() {
+    super.initState();
+    // ambiguate(WidgetsBinding.instance)!.addObserver(this);
+    // Instances.player = Instances.player;
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+    ));
+    // _init();
+    _controller = AnimationController(
+      duration: const Duration(minutes: 6),
+      vsync: this,
+    );
+    if (mounted) {
+      _controller.forward();
+    }
+    IsolateNameServer.registerPortWithName(
+        receivePort.sendPort, 'downloadingVideo');
+    receivePort.listen((message) {
+      setState(() {
+        progress = message;
+      });
+    });
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  static downloadCallback(id, status, progress) {
+    SendPort sendPort = IsolateNameServer.lookupPortByName('downloadingVideo')!;
+    sendPort.send(progress);
   }
 
   @override
@@ -217,26 +314,12 @@ class NetworkSongState extends State<NetworkSong>
                     return const SizedBox();
                   }
                   final metadata = state!.currentSource!.tag as MediaItem;
+                  // log('url ${networkSong.listSong1[0]}');
                   return SizedBox(
                     height: context.height * 0.3,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        //             RotationTransition(
-                        //   turns: Tween(begin: 0.0, end: 5.0).animate(_controller),
-                        //   child: QueryArtworkWidget(
-                        //       id: widget.songmodel[int.parse(snapshot.data.toString())].id,
-                        //       type: ArtworkType.AUDIO,
-                        //       artworkWidth: 200,
-                        //       artworkHeight: 200,
-                        //       artworkBorder: BorderRadius.circular(100),
-                        //       keepOldArtwork: true,
-                        //       nullArtworkWidget: const CircleAvatar(
-                        //         radius: 100, // Image radius
-                        //         backgroundImage: NetworkImage(
-                        //             'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Circle-icons-music.svg/2048px-Circle-icons-music.svg.png'),
-                        //       )),
-                        // );
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -300,15 +383,9 @@ class NetworkSongState extends State<NetworkSong>
                   );
                 },
               ),
-              // Text(  Instances.currentPosition.toString(),style: AppTheme.headLine3),
-              // StreamBuilder<PositionData>(
-              //   stream: _positionDataStream,
-              //   builder: (context, snapshot) {
-              //   return Text(snapshot.data?.position.toString()??'00',style: AppTheme.headLine3,);
-              //   },
-              // ),
               const SizedBox(height: 8.0),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   StreamBuilder<LoopMode>(
                     stream: Instances.player.loopModeStream,
@@ -335,13 +412,18 @@ class NetworkSongState extends State<NetworkSong>
                       );
                     },
                   ),
-                  Expanded(
-                    child: Text(
-                      "Playlist",
-                      style: Theme.of(context).textTheme.headline6,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.favorite_border,
+                        color: Colors.grey,
+                      )),
+                  IconButton(
+                      onPressed: _downloadAudio,
+                      icon: const Icon(
+                        Icons.download,
+                        color: Colors.grey,
+                      )),
                   StreamBuilder<bool>(
                     stream: Instances.player.shuffleModeEnabledStream,
                     builder: (context, snapshot) {
@@ -362,6 +444,10 @@ class NetworkSongState extends State<NetworkSong>
                   ),
                 ],
               ),
+              Text(
+                progress.toString(),
+                style: AppTheme.headLine3,
+              )
               // SizedBox(
               //   height: 240.0,
               //   child: StreamBuilder<SequenceState?>(

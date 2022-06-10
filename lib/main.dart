@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/ui/splash_screen.dart';
 
 
 Future<void> main()async {
    WidgetsFlutterBinding.ensureInitialized();
+   await FlutterDownloader.initialize();
    await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',

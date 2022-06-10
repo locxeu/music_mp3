@@ -47,7 +47,7 @@ class _LocalPageState extends State<LocalPage> {
 
     await queryLocalSong().then((value) {
       listLocalSong = value;
-      print('b $listLocalSong');
+      log('b $listLocalSong');
       if(listLocalSong.isEmpty){
           //  showDialog(
           // context: context,
@@ -57,11 +57,12 @@ class _LocalPageState extends State<LocalPage> {
           // return;
       }
       for (var i = 0; i < listLocalSong.length; i++) {
-        localAudioSource.add(
+  
+              localAudioSource.add(
           AudioSource.uri(
             Uri.parse(listLocalSong[i].uri!),
             tag: MediaItem(
-              album: listLocalSong[i].album!,
+              album: listLocalSong[i].album??'<unknow>',
               title: listLocalSong[i].displayNameWOExt,
               // artwork: listLocalSong[i].id.toString(),
               id: listLocalSong[i].id.toString()
@@ -217,65 +218,7 @@ class _LocalPageState extends State<LocalPage> {
                 ),
               )
             ],
-          )
-        // FutureBuilder<List<SongModel>>(
-        //   future: _audioQuery.querySongs(
-        //       sortType: null,
-        //       orderType: OrderType.ASC_OR_SMALLER,
-        //       uriType: UriType.EXTERNAL,
-        //       ignoreCase: true),
-        //   builder: (context, item) {
-        //     if (item.data == null) {
-        //       return const Center(
-        //         child: CircularProgressIndicator(),
-        //       );
-        //     }
-        //     if (item.data!.isEmpty) {
-        //       return const Center(
-        //         child: Text('No song'),
-        //       );
-        //     }
-        //     return ListView.builder(
-        //       itemBuilder: (context, index) {
-        //         return Column(
-        //           children: [
-        //             ListTile(
-        //               onTap: () {
-        //                 Instances.player.play();
-        //                 print('Instances.player.hasNext ${Instances.player.hasNext}');
-        //                 print('Instances.player.hasPrevious ${Instances.player.hasPrevious}');
-        //                 // Navigator.push(
-        //                 //   context,
-        //                 //   MaterialPageRoute(
-        //                 //       builder: (context) => DetailSong(
-        //                 //             songModel: item.data!,
-        //                 //             audioPlayer: _audioPlayer,
-        //                 //             index: index,
-        //                 //           )),
-        //                 // );
-        //               },
-        //               leading: QueryArtworkWidget(
-        //                 id: item.data![index].id,
-        //                 type: ArtworkType.AUDIO,
-        //                 nullArtworkWidget:
-        //                     Image.asset('assets/images/music_icon.png'),
-        //               ),
-        //               title: Text(item.data![index].displayName),
-        //               subtitle: Text(item.data![index].artist ?? 'Unknow Artist'),
-        //               trailing: const Icon(Icons.more_horiz),
-        //             ),
-        //             const Divider(
-        //               thickness: 1,
-        //               indent: 80,
-        //             )
-        //           ],
-        //         );
-        //       },
-        //       itemCount: item.data!.length,
-        //     );
-        //   },
-        // ),
-
+        )
         : DetailSong2(
             audioPlayer: Instances.player,
             onTap: changeStatus,

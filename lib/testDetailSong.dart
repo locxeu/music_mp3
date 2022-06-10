@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_mp3_app/common.dart';
@@ -128,7 +129,7 @@ class _DetailSong2State extends State<DetailSong2>
                   return Center(
                     child: Text(
                       widget.songmodel[int.parse(snapshot.data.toString())]
-                          .artist!,
+                          .artist??'Unknow',
                       textAlign: TextAlign.center,
                       style:
                          AppTheme.headLine2,
@@ -209,6 +210,13 @@ class _DetailSong2State extends State<DetailSong2>
                       );
                     },
                   ),
+                  // GestureDetector(
+                  //    onTap: (){
+                  //      log('kk');
+                  //     Instances.player.setAudioSource(AudioSource.uri(Uri.parse('https://rr5---sn-42u-i5olz.googlevideo.com/videoplayback?expire=1654857014&ei=1siiYsfgJreA2roPtfi-oAg&ip=1.55.108.212&id=o-AAtE6lFs42U-GygM_oLwmZfrZu3zlRQaXxI3S1d0EuZ-&itag=251&source=youtube&requiressl=yes&mh=bJ&mm=31%2C26&mn=sn-42u-i5olz%2Csn-oguelnsy&ms=au%2Conr&mv=m&mvi=5&pl=24&initcwndbps=2477500&vprv=1&mime=audio%2Fwebm&gir=yes&clen=3684679&dur=242.081&lmt=1540865848284047&mt=1654835096&fvip=5&keepalive=yes&fexp=24001373%2C24007246&c=ANDROID&txp=5411222&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRAIgVLvFAgynnAItE92ESaeN2f_UHrIULoH3D0cLeDujIUUCIGIVOFJ32hdJQ2wXPU5HzlI6grrA61lW-Ghgsf9EFQaZ&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRQIhALlYwEe0apGIirakqupZ-5vivOVvKxN_D-qQnS8jSUmFAiAF6SEnqqa7M3Q7ZwrVPer2w0nzi7fzUj-goVChLEvAfQ%3D%3D')));
+                  //     Instances.player.play();
+                  //   },
+                  //   child:  Text('haha',style: AppTheme.headLine2,))
                 ],
               ),
           ],

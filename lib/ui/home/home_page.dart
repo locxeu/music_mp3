@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
             builder: (context, child) => const SearchPage());
       // Create this function, it should return your second page as a widget
       case 2:
-        return const LibraryPage(); // Create this function, it should return your third page as a widget
+        return  LibraryPage(); // Create this function, it should return your third page as a widget
       case 3:
         return const LocalPage(); // Create this function, it should return your fourth page as a widget
     }
