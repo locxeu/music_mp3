@@ -73,33 +73,39 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
           context: context,
           builder: (context) {
             return CustomDialogBox(
-              title: 'ALERT',
-              descriptions: e.toString(),
-              text: 'OK',
-              imageFile: Images.error
-            );
+                title: 'ALERT',
+                descriptions: e.toString(),
+                text: 'OK',
+                imageFile: Images.error);
           });
     }
   }
 
-  static testaudio(List<dynamic> song) async {
+  static addToPlayist(List<dynamic> song) async {
     List<AudioSource> playList = [];
     var yt = YoutubeExplode();
     for (int i = 0; i < song.length; i++) {
-      var result=  await SearchSongState().getRawAudioUrl(song[i]['id']);
-       var  urlVideo = await SearchSongState().getAudioUrl(result);
-       
+      var result = await SearchSongState().getRawAudioUrl(song[i]['id']);
+      var urlVideo = await SearchSongState().getAudioUrl(result);
+
       // var streamInfo = await yt.videos.streamsClient.getManifest(song[i]['id']);
 
       // if (streamInfo.audioOnly.isNotEmpty) {
       //   StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
-        print('$i $urlVideo');
-        playList.add(AudioSource.uri(Uri.parse(urlVideo),
-            tag: MediaItem(
-                id: i.toString(),
-                album: "Đường về",
-                title: song[i]['title'],
-                artUri: Uri.parse(song[i]['thumbnail']))));
+      // print('$i $urlVideo');
+      playList.add(
+        AudioSource.uri(
+          Uri.parse(urlVideo),
+          tag: MediaItem(
+            id: i.toString(),
+            album: "Đường về",
+            title: song[i]['title'],
+            artUri: Uri.parse(
+              song[i]['thumbnail'],
+            ),
+          ),
+        ),
+      );
       //   var stream = yt.videos.streamsClient.get(streamInfo1);
       // }
     }
@@ -118,6 +124,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     //   statusBarColor: Colors.black,
     // ));
     if (!Instances.player.playing) {
+      log('alo alo');
       _init();
     }
   }
@@ -135,55 +142,62 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     print(isLoadedSoure);
     return Consumer<SearchSongState>(builder: (_, searchState, __) {
+      log('searchState.playList ${searchState.playList}');
+      log('searchState.playList ${searchState.isPlaying}');
+
       return searchState.isPlaying
           ? NetworkSong(
               listAudio: searchState.playList,
             )
-          : Column(children: [
-              SizedBox(
-                height: context.height * 0.06,
-              ),
-              Text(
-                'Tìm kiếm',
-                style: AppTheme.headLine1,
-              ),
-              Container(
-                margin: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
+          : Column(
+              children: [
+                SizedBox(
+                  height: context.height * 0.06,
+                ),
+                Text(
+                  'Tìm kiếm',
+                  style: AppTheme.headLine1,
+                ),
+                Container(
+                  margin: const EdgeInsets.all(9),
+                  decoration: BoxDecoration(
                     color: AppTheme.backgroundColor,
-                    borderRadius: BorderRadius.circular(10)),
-                child: TextFormField(
-                  onFieldSubmitted: (value) async {
-                    await searchState.queryYoutubeApi(searchText.text, context);
-                           setState(() {
-                                    isLoadedSoure = false;
-                          });
-
-                  },
-                  controller: searchText,
-                  decoration: InputDecoration(
-                    icon: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: GestureDetector(
-                          onTap: () async {
-                            // print('searchText ${searchText.text}');
-                            // await searchState.queryYoutubeApi(
-                            //     searchText.text, context);
-                            //  playListSong = await compute(
-                            //                                   testaudio, searchState.listSong1,);
-                            // testaudio(searchState.listSong1);
-                            // print('_playlist ${_playlist.toString()}');
-                            //  await _init();
-                          },
-                          child: const Icon(Icons.search)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    onFieldSubmitted: (value) async {
+                      await searchState.queryYoutubeApi(
+                          searchText.text, context);
+                      setState(() {
+                        isLoadedSoure = false;
+                      });
+                    },
+                    controller: searchText,
+                    decoration: InputDecoration(
+                      icon: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                        ),
+                        child: GestureDetector(
+                            onTap: () async {
+                              // print('searchText ${searchText.text}');
+                              // await searchState.queryYoutubeApi(
+                              //     searchText.text, context);
+                              //  playListSong = await compute(
+                              //                                   testaudio, searchState.listSong1,);
+                              // testaudio(searchState.listSong1);
+                              // print('_playlist ${_playlist.toString()}');
+                              //  await _init();
+                            },
+                            child: const Icon(Icons.search)),
+                      ),
+                      border: InputBorder.none,
+                      hintText: 'Nghệ sĩ, bài hát,...',
                     ),
-                    border: InputBorder.none,
-                    hintText: 'Nghệ sĩ, bài hát,...',
                   ),
                 ),
-              ),
-              //  Text(searchState.listSong.length.toString())
-              Expanded(
+                //  Text(searchState.listSong.length.toString())
+                Expanded(
                   child: StreamBuilder<SequenceState?>(
                       stream: Instances.player.sequenceStateStream,
                       builder: (context, snapshot) {
@@ -199,26 +213,33 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () async {
-                                searchState.playSong();
+                                  searchState.playSong();
+                                  searchState.getCurrentIndex(index);
+                                  //! Khi load xong source bài check để chuyển sang bài mới luôn
                                   if (isLoadedSoure) {
-                                    await Instances.player
-                                        .seek(Duration.zero, index: index);
+                                    await Instances.player.seek(
+                                      Duration.zero,
+                                      index: index,
+                                    );
                                     await Instances.player.play();
                                     return;
                                   }
                                   await searchState.getAudio(
-                                      searchState.listSong1, index);
-                                      // playListSong=await testaudio( searchState.listSong1,);
+                                    searchState.listSong1,
+                                    index,
+                                  );
+                                  // playListSong=await testaudio( searchState.listSong1,);
                                   playListSong = await compute(
-                                    testaudio,
+                                    addToPlayist,
                                     searchState.listSong1,
                                   );
-                                  searchState.playList=playListSong;
+                                  searchState.playList = playListSong;
                                   await _init();
                                   setState(() {
                                     isLoadedSoure = true;
+                                    log('đã load xong source');
                                   });
-                               },
+                                },
                                 child: Material(
                                   color: Colors.transparent,
                                   child: ListTile(
@@ -227,27 +248,32 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                         : null,
                                     leading: CircleAvatar(
                                       radius: 50,
-                                      backgroundImage: NetworkImage(searchState
-                                          .listSong1[index]['thumbnail']),
+                                      backgroundImage: NetworkImage(
+                                        searchState.listSong1[index]
+                                            ['thumbnail'],
+                                      ),
                                     ),
                                     title: SizedBox(
-                                        width: context.width * 0.7,
-                                        child: Text(
-                                          searchState.listSong1[index]['title'],
-                                          style: AppTheme.headLine2,
-                                          maxLines: 1,
-                                        )),
+                                      width: context.width * 0.7,
+                                      child: Text(
+                                        searchState.listSong1[index]['title'],
+                                        style: AppTheme.headLine2,
+                                        maxLines: 1,
+                                      ),
+                                    ),
                                     subtitle: Text(
-                                        searchState.listSong1[index]
-                                            ['duration'],
-                                        style: AppTheme.headLine5),
+                                      searchState.listSong1[index]['duration'],
+                                      style: AppTheme.headLine5,
+                                    ),
                                     // trailing: Icon(Icons.h_plus_mobiledata),
                                   ),
                                 ),
                               );
                             });
-                      })),
-            ]);
+                      }),
+                ),
+              ],
+            );
     });
   }
 }

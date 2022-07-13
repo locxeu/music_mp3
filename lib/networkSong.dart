@@ -149,8 +149,8 @@ class NetworkSongState extends State<NetworkSong>
      if(status.isGranted){
       final baseStorage = await getApplicationSupportDirectory();
 log('baseStorage ${baseStorage.path}');
-      final id = await FlutterDownloader.enqueue(url: 'https://rr2---sn-42u-i5oes.googlevideo.com/videoplayback?expire=1654875696&ei=0BGjYru4M8aOvcAPqfq8wAE&ip=1.55.108.212&id=o-AGJObCJZwzzg_4LL5kb0geIeghJyco-p7A5ihyDjsby0&itag=140&source=youtube&requiressl=yes&mh=VK&mm=31,26&mn=sn-42u-i5oes,sn-oguesn6s&ms=au,onr&mv=m&mvi=2&pcm2cms=yes&pl=24&initcwndbps=2071250&spc=4ocVC4ZsSCuwhQHT1HT0Jo3-3OKT9E0&vprv=1&mime=audio/mp4&ns=oYzl9fO8ENTtWdNQwGrCEGwG&gir=yes&clen=5455652&dur=337.060&lmt=1639904228545548&mt=1654853580&fvip=2&keepalive=yes&fexp=24001373,24007246&c=WEB&txp=5532434&n=2cprQbCou-2ov9g-7p&sparams=expire,ei,ip,id,itag,source,requiressl,spc,vprv,mime,ns,gir,clen,dur,lmt&lsparams=mh,mm,mn,ms,mv,mvi,pcm2cms,pl,initcwndbps&lsig=AG3C_xAwRQIhAOVWNsyh4DNGRoFj29uj4DjsectWQwKHF5zwF4kafEbCAiBeFPw0o3_H7baW85Nte7tBERQUNLzS4oEcoeoeW8MdzA==&sig=AOq0QJ8wRAIgOSMHU_h6chHEEjg62zs6mT5Mndo29Q2O0YVcJoA7iLcCICXJA1FouK_X2IOpa_5Y0GLafaqhUkJ0o16Cvw6KdiGn'
-      , savedDir: baseStorage.path,fileName: 'vutest.mp3',saveInPublicStorage: true,showNotification: true);
+      final id = await FlutterDownloader.enqueue(url: 'https://rr5---sn-42u-i5ol7.googlevideo.com/videoplayback?expire=1654880925&ei=PSajYr6TEIbHs8IP7ua6oAQ&ip=1.55.108.212&id=o-AIyzVL0wFJassfwW-CSz6YD2i8ECdpdwVG_9-cyKWMOc&itag=251&source=youtube&requiressl=yes&mh=yh&mm=31%2C26&mn=sn-42u-i5ol7%2Csn-oguesndl&ms=au%2Conr&mv=m&mvi=5&pl=24&initcwndbps=1963750&vprv=1&mime=audio%2Fwebm&gir=yes&clen=4023161&dur=240.661&lmt=1644072366985007&mt=1654858867&fvip=1&keepalive=yes&fexp=24001373%2C24007246&c=ANDROID&txp=4532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRgIhAKX-IBWkIsMVP8tBmYmtQbuXJWuKjySXixAQFXEAyFq3AiEAq6MK5Z0-Nu_pnYrFBw-bx0dudWZDqBACi_T7gdZ8d1o%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRQIgRlvF0_daJ1fwyb3STZQqaVBIXtTgmKlG3xvGV_heKnoCIQCF_RjBJEmg6wNzyx9SzSz3pPNjEo52k_nes-FaY2fyWA%3D%3D'
+      , savedDir: baseStorage.path,fileName: 'phut ban dau.mp3',saveInPublicStorage: true,showNotification: true);
      }else{
        log('No permission');
      }
@@ -350,22 +350,22 @@ log('baseStorage ${baseStorage.path}');
                 },
               ),
               ControlButtons(Instances.player),
-              StreamBuilder(
-                  stream: Instances.player.currentIndexStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return const Center(
-                        child: Text(''),
-                      );
-                    }
-                    return Center(
-                      child: Text(
-                        snapshot.data.toString(),
-                        textAlign: TextAlign.center,
-                        style: AppTheme.headLine2,
-                      ),
-                    );
-                  }),
+              // StreamBuilder(
+              //     stream: Instances.player.currentIndexStream,
+              //     builder: (context, snapshot) {
+              //       if (snapshot.data == null) {
+              //         return const Center(
+              //           child: Text(''),
+              //         );
+              //       }
+              //       return Center(
+              //         child: Text(
+              //           snapshot.data.toString(),
+              //           textAlign: TextAlign.center,
+              //           style: AppTheme.headLine2,
+              //         ),
+              //       );
+              //     }),
               StreamBuilder<PositionData>(
                 stream: _positionDataStream,
                 builder: (context, snapshot) {
@@ -446,6 +446,10 @@ log('baseStorage ${baseStorage.path}');
               ),
               Text(
                 progress.toString(),
+                style: AppTheme.headLine3,
+              ),
+               Text(
+                'current index playing ${context.read<SearchSongState>().currentIndexPlaying.toString()}',
                 style: AppTheme.headLine3,
               )
               // SizedBox(

@@ -47,7 +47,9 @@ class _HomePageState extends State<HomePage> {
               image: DecorationImage(
                   image: AssetImage('assets/images/bg.jpg'),
                   fit: BoxFit.cover)),
-          child: getBody(index),
+          child: ChangeNotifierProvider(
+            create: ((context) =>  SearchSongState()),
+            child: getBody(index)),
         ),
         bottomNavigationBar: InkWell(
             child: NavigationBarWidget(
@@ -64,9 +66,7 @@ class _HomePageState extends State<HomePage> {
         return const HomeScreen();
       // Create this function, it should return your first page as a widget
       case 1:
-        return ChangeNotifierProvider(
-            create: (context) => SearchSongState(),
-            builder: (context, child) => const SearchPage());
+        return const SearchPage();
       // Create this function, it should return your second page as a widget
       case 2:
         return  LibraryPage(); // Create this function, it should return your third page as a widget

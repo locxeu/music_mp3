@@ -7,16 +7,17 @@ class NetworkCall{
 
   Future<dynamic> post(Map<String, dynamic> body, String url, bool isFormData) async {
 
-    print("Link: $url");
-    print("Body: $body");
+    // print("Link: $url");
+    // print("Body: $body");
 
     try {
       FormData _formData = FormData.fromMap(body);
 
       final response = await dio.post(url,
           data: isFormData == true ? _formData : body);
+       //TODO mở dòng dưới để xem response
 
-      print("Response: ${response.data}");
+      // print("Response: ${response.data}");
 
       return response.data;
     } on DioError catch (error) {
@@ -32,8 +33,8 @@ class NetworkCall{
 
       final response = await dio.get(url,
          );
-
-      print("Response: ${response.data}");
+       //TODO mở dòng dưới để xem response
+      // print("Response: ${response.data}");
 
       return response.data;
     } on DioError catch (error) {

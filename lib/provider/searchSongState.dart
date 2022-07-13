@@ -72,13 +72,16 @@ class SearchSongState extends BaseState {
   }
 
   Future<void> getAudio(List<dynamic> song, int index) async {
+    log('index hiện tại là $index');
     var yt = YoutubeExplode();
-    currentIndexPlaying = index;
+    getCurrentIndex(index);
+    log('$index id  ${song[index]['id']}');
     var streamInfo =
         await yt.videos.streamsClient.getManifest(song[index]['id']);
     if (streamInfo.audioOnly.isNotEmpty) {
       StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
-      print('${streamInfo1.url}');
+      print('$index ${streamInfo1.url}');
+      playList.clear();
       playList.add(AudioSource.uri(streamInfo1.url,
           tag: MediaItem(
               id: index.toString(),
@@ -87,6 +90,9 @@ class SearchSongState extends BaseState {
               artUri: Uri.parse(song[index]['thumbnail']))));
       Instances.player.setAudioSource(playList[0]);
       Instances.player.play();
+      log('title ${song[index]['title']}');
+      log('playList ${playList[0]}');
+      log('haha');
     }
     yt.close();
   }
@@ -94,7 +100,8 @@ class SearchSongState extends BaseState {
   Future<dynamic> queryYoutubeApi(String searchText, context) async {
     setLoading(context);
     try {
-      var result = await searchSongRepo.search(decode(AppApi().urlSearch) + searchText);
+      var result =
+          await searchSongRepo.search(decode(AppApi().urlSearch) + searchText);
       result = trimString(result);
       var listItems = [];
       final data = jsonDecode(result);
@@ -203,9 +210,9 @@ class SearchSongState extends BaseState {
   getDuration(List test) {}
 
   getRawAudioUrl(String idVideo) async {
-    log('raw api ${decode('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0=') + 'd9edJZFVSN4'}');
-    String result = await searchSongRepo.search(
-        decode(AppApi().urlVideo) + idVideo);
+    // log('raw api ${decode('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0=') + 'd9edJZFVSN4'}');
+    String result =
+        await searchSongRepo.search(decode(AppApi().urlVideo) + idVideo);
     return result;
   }
 
@@ -214,20 +221,20 @@ class SearchSongState extends BaseState {
     List<String> arrCheckSpecChar = ["\\", "\\\\"];
     String specChar = "";
     String typeVid = "\":140";
-    log("typeVid $typeVid");
+    // log("typeVid $typeVid");
 
     List<String> endJsonArr = ["}"];
     int startJsonIdx =
         str.indexOf("{" + specChar + "\"itag" + specChar + typeVid);
-    log("startJsonIdx $startJsonIdx");
+    // log("startJsonIdx $startJsonIdx");
     if (startJsonIdx == -1) {
-      log("itag change structure!!!");
-      log("itag index:${str.indexOf("itag")}");
+      // log("itag change structure!!!");
+      // log("itag index:${str.indexOf("itag")}");
 
       if (!str.contains("itag")) {
         return "Error";
       }
-      log(str.substring(str.indexOf("itag") - 20, str.indexOf("itag") + 20));
+      // log(str.substring(str.indexOf("itag") - 20, str.indexOf("itag") + 20));
       for (int i = 0; i < arrCheckSpecChar.length; i++) {
         specChar = arrCheckSpecChar[i];
         startJsonIdx =
@@ -248,8 +255,8 @@ class SearchSongState extends BaseState {
     // log('newStr $newStr');
     int indexUrl = newStr.indexOf("url");
     int endJsonIdx = newStr.indexOf(endJsonArr[0]);
-    log('endJsonIdx $endJsonIdx');
-    log('indexUrl $indexUrl');
+    // log('endJsonIdx $endJsonIdx');
+    // log('indexUrl $indexUrl');
     if (endJsonIdx < indexUrl) {
       // trước khi có link url
       endJsonIdx = newStr.indexOf(endJsonArr[0], indexUrl);
@@ -303,7 +310,7 @@ class SearchSongState extends BaseState {
           .indexOf(specChar + "/s" + specChar + "/player" + specChar + "/");
 
       if (idxStartBase == -1) {
-        log("basejs change structure!!!");
+        // log("basejs change structure!!!");
         for (int i = 0; i < arrCheckSpecChar.length; i++) {
           specChar = arrCheckSpecChar[i];
           idxStartBase = tempBase
@@ -313,14 +320,13 @@ class SearchSongState extends BaseState {
           }
         }
       }
-     String baseLink = tempBase.substring(idxStartBase, tempBase.length);
+      String baseLink = tempBase.substring(idxStartBase, tempBase.length);
       baseLink = baseLink.replaceAll("/\\/", "");
       baseLink = decode(urlBase) + baseLink;
       String baseData = await searchSongRepo.search(baseLink);
       String sigAfter = handleFunctionBase(baseData, signature);
 
       ytbUrl = urlDecode + "&" + keySig + "=" + sigAfter;
-
     }
     return ytbUrl;
   }
@@ -337,7 +343,7 @@ class SearchSongState extends BaseState {
     String charReverse = "", charSplice = "", charSwap = "";
     List<String> lines = dataText.split("\n");
     var trimline = lines.removeLast();
-       for (int i = 0; i < lines.length; i++) {
+    for (int i = 0; i < lines.length; i++) {
       if (lines[i].contains(txtMain1) && lines[i].contains(txtMain2)) {
         idxMain = i;
       }
@@ -359,25 +365,24 @@ class SearchSongState extends BaseState {
       List<String> linesMain = lines[idxMain].split(";");
       linesMain.removeLast();
       for (int i = 0; i < linesMain.length; i++) {
-              //? Split to another funtion
+        //? Split to another funtion
         if (linesMain[i].contains(charReverse)) {
           String numStr = linesMain[i]
               .substring(linesMain[i].indexOf("("), linesMain[i].indexOf(")"));
           signature = handleString(
-              signature, "reverse", numStr.replaceAll(RegExp(r'[^0-9]'),''));
+              signature, "reverse", numStr.replaceAll(RegExp(r'[^0-9]'), ''));
         }
         if (linesMain[i].contains(charSplice)) {
           String numStr = linesMain[i]
               .substring(linesMain[i].indexOf("("), linesMain[i].indexOf(")"));
-                       signature =
-              handleString(signature, "splice", numStr.replaceAll(RegExp(r'[^0-9]'),''));
-              
+          signature = handleString(
+              signature, "splice", numStr.replaceAll(RegExp(r'[^0-9]'), ''));
         }
         if (linesMain[i].contains(charSwap)) {
           String numStr = linesMain[i]
               .substring(linesMain[i].indexOf("("), linesMain[i].indexOf(")"));
-          signature =
-              handleString(signature, "swap", numStr.replaceAll(RegExp(r'[^0-9]'),''));
+          signature = handleString(
+              signature, "swap", numStr.replaceAll(RegExp(r'[^0-9]'), ''));
         }
       }
     } catch (e) {
@@ -386,14 +391,12 @@ class SearchSongState extends BaseState {
     return signature;
   }
 
-
-
   handleString(String str, String type, String idx) {
     log('=======>> handle string');
     if (idx == "") {
       return str;
     }
-       int index = int.parse(idx);
+    int index = int.parse(idx);
     if (type == "reverse") {
       return StringBuffer(str).toString().split('').reversed.join();
     } else if (type == "splice") {
@@ -402,19 +405,20 @@ class SearchSongState extends BaseState {
       } // || index+1
     } else if (type == "swap") {
       if (index < str.length) {
-        String s =str;
-        var l = s[0] , r = s[index];
-              s=replaceCharAt(s,0,r);
-        s= replaceCharAt(s,index,l);
+        String s = str;
+        var l = s[0], r = s[index];
+        s = replaceCharAt(s, 0, r);
+        s = replaceCharAt(s, index, l);
         return s.toString();
       }
     }
     return str;
   }
 
-
-//function to replace one character in String to another because in Flutter String is imumtabe so String can't be change 
+//function to replace one character in String to another because in Flutter String is imumtabe so String can't be change
   String replaceCharAt(String oldString, int index, String newChar) {
-  return oldString.substring(0, index) + newChar + oldString.substring(index + 1);
-}
+    return oldString.substring(0, index) +
+        newChar +
+        oldString.substring(index + 1);
+  }
 }

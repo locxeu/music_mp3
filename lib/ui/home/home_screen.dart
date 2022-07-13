@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/config/theme/image_path.dart';
 import 'package:music_mp3_app/instance/instance.dart';
@@ -207,11 +206,11 @@ num duration=0;
           const SizedBox(
             height: 24,
           ),
-            CountdownTimer(
-              controller: controller,
-              onEnd: onEnd,
-              endTime: endTime,
-          ),
+          //   CountdownTimer(
+          //     controller: controller,
+          //     onEnd: onEnd,
+          //     endTime: endTime,
+          // ),
           Expanded(
               child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
