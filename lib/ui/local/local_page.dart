@@ -47,7 +47,9 @@ class _LocalPageState extends State<LocalPage> {
 
     await queryLocalSong().then((value) {
       listLocalSong = value;
-      log('b $listLocalSong');
+      listLocalSong=listLocalSong.where((element) => element.duration!=0&&element.isMusic==true).toList();
+            log('b $listLocalSong');
+
       if(listLocalSong.isEmpty){
           //  showDialog(
           // context: context,
@@ -166,6 +168,7 @@ class _LocalPageState extends State<LocalPage> {
                       //    if (oldIndex < newIndex) newIndex--;
                       //    playlist.move(oldIndex, newIndex);
                       //  },
+                      physics: const BouncingScrollPhysics(),
                       children: [
                         for (var i = 0; i < sequence.length; i++)
                           Dismissible(

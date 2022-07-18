@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter/material.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
@@ -35,9 +35,16 @@ class ControlButtons extends StatelessWidget {
         ),
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon: Icon(Icons.skip_previous, color: AppTheme.backgroundColor),
-            onPressed: player.hasPrevious ? player.seekToPrevious : null,
+          builder: (context, snapshot) => Consumer<SearchSongState>(
+            builder: (_,previousSong,__)=>
+             IconButton(
+              icon: Icon(Icons.skip_previous, color: AppTheme.backgroundColor),
+              onPressed: player.hasPrevious ? player.seekToPrevious : (){
+               if(previousSong.currentIndexPlaying!=0){
+                 previousSong.getAudio(previousSong.listSong1, previousSong.currentIndexPlaying-1);
+               }
+              },
+            ),
           ),
         ),
         StreamBuilder<PlayerState>(

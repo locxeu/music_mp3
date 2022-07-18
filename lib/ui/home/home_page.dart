@@ -1,13 +1,11 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:music_mp3_app/ui/home/home_screen.dart';
 import 'package:music_mp3_app/ui/library/lib_page.dart';
 import 'package:music_mp3_app/ui/local/local_page.dart';
 import 'package:music_mp3_app/ui/search/search_page.dart';
 import 'package:music_mp3_app/ui/widget/bottom_bar.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -47,9 +45,7 @@ class _HomePageState extends State<HomePage> {
               image: DecorationImage(
                   image: AssetImage('assets/images/bg.jpg'),
                   fit: BoxFit.cover)),
-          child: ChangeNotifierProvider(
-            create: ((context) =>  SearchSongState()),
-            child: getBody(index)),
+          child: getBody(index),
         ),
         bottomNavigationBar: InkWell(
             child: NavigationBarWidget(

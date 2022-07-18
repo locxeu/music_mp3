@@ -115,7 +115,7 @@ class _DetailSongState extends State<DetailSong>
     // TODO: implement initState
     playSong(widget.songModel[widget.index].uri);
     timer =
-        Timer.periodic(Duration(seconds: 1), (Timer t) => checkToNextSong());
+        Timer.periodic(const Duration(seconds: 1), (Timer t) => checkToNextSong());
     _controller = AnimationController(
       duration: const Duration(minutes: 6),
       vsync: this,
@@ -154,12 +154,12 @@ class _DetailSongState extends State<DetailSong>
                       onTap: () {
                         Navigator.of(context).pop();
                       },
-                      child: Icon((Icons.arrow_back_ios))),
+                      child: const Icon((Icons.arrow_back_ios))),
                   const Text(
                     'Now Playing',
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
-                  Icon(Icons.alarm)
+                  const Icon(Icons.alarm)
                 ],
               ),
               const SizedBox(
@@ -189,7 +189,7 @@ class _DetailSongState extends State<DetailSong>
                   alignment: Alignment.center,
                   child: Text(
                     widget.songModel[widget.index].displayNameWOExt,
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -198,7 +198,7 @@ class _DetailSongState extends State<DetailSong>
               ),
               Text(
                 widget.songModel[widget.index].artist ?? 'unknown',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
               ),
               const SizedBox(
                 height: 80,
@@ -261,8 +261,8 @@ class _DetailSongState extends State<DetailSong>
                         });
                       },
                       icon: _isPlaying
-                          ? Icon(Icons.pause)
-                          : Icon(Icons.play_arrow)),
+                          ? const Icon(Icons.pause)
+                          : const Icon(Icons.play_arrow)),
                   StreamBuilder<SequenceState?>(
                     stream: widget.audioPlayer.sequenceStateStream,
                     builder: (context, snapshot) => IconButton(

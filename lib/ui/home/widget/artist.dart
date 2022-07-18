@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_mp3_app/ui/search/search_page.dart';
 
 class FavouriteArtist extends StatefulWidget {
   const FavouriteArtist({Key? key}) : super(key: key);
@@ -15,26 +16,34 @@ class _FavouriteArtistState extends State<FavouriteArtist> {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              children: const [
-                CircleAvatar(
-                  backgroundImage:
-                      AssetImage('assets/images/favorite_artist/taylor.jpg'),
-                  radius: 80,
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  'Taylor Swift',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                )
-              ],
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage(searchText: 'taylor swift',)),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: const [
+                  CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/images/favorite_artist/taylor.jpg'),
+                    radius: 80,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    'Taylor Swift',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
             ),
           ),
           Container(

@@ -23,6 +23,7 @@ class SearchSongState extends BaseState {
   bool isPlaying = false;
   int currentIndexPlaying = 0;
   List<AudioSource> playList = [];
+  bool isLoadedSoure=false;
 
   String api = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vcmVzdWx0cz9zZWFyY2hfcXVlcnk9';
   String urlBase = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20=';
