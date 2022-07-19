@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter/material.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
+import 'package:music_mp3_app/provider/searchSongState.dart';
+import 'package:provider/provider.dart';
 
 class ControlButtons extends StatelessWidget {
   final AudioPlayer player;
@@ -14,7 +16,10 @@ class ControlButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon:  Icon(Icons.volume_up,color: AppTheme.backgroundColor,),
+          icon: Icon(
+            Icons.volume_up,
+            color: AppTheme.backgroundColor,
+          ),
           onPressed: () {
             showSliderDialog(
               context: context,
@@ -30,9 +35,16 @@ class ControlButtons extends StatelessWidget {
         ),
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon:  Icon(Icons.skip_previous,color: AppTheme.backgroundColor),
-            onPressed: player.hasPrevious ? player.seekToPrevious : null,
+          builder: (context, snapshot) => Consumer<SearchSongState>(
+            builder: (_,previousSong,__)=>
+             IconButton(
+              icon: Icon(Icons.skip_previous, color: AppTheme.backgroundColor),
+              onPressed: player.hasPrevious ? player.seekToPrevious : (){
+               if(previousSong.currentIndexPlaying!=0){
+                 previousSong.getAudio(previousSong.listSong1, previousSong.currentIndexPlaying-1);
+               }
+              },
+            ),
           ),
         ),
         StreamBuilder<PlayerState>(
@@ -51,19 +63,19 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon:  Icon(Icons.play_arrow,color: AppTheme.backgroundColor),
+                icon: Icon(Icons.play_arrow, color: AppTheme.backgroundColor),
                 iconSize: 64.0,
                 onPressed: player.play,
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon:  Icon(Icons.pause,color: AppTheme.backgroundColor),
+                icon: Icon(Icons.pause, color: AppTheme.backgroundColor),
                 iconSize: 64.0,
                 onPressed: player.pause,
               );
             } else {
               return IconButton(
-                icon:  Icon(Icons.replay,color: AppTheme.backgroundColor),
+                icon: Icon(Icons.replay, color: AppTheme.backgroundColor),
                 iconSize: 64.0,
                 onPressed: () => player.seek(Duration.zero,
                     index: player.effectiveIndices!.first),
@@ -73,12 +85,18 @@ class ControlButtons extends StatelessWidget {
         ),
         StreamBuilder<SequenceState?>(
           stream: player.sequenceStateStream,
-          builder: (context, snapshot) => IconButton(
-            icon:  Icon(Icons.skip_next,color: AppTheme.backgroundColor),
-            onPressed: player.hasNext ? (){
-              player.seekToNext();
-              print(player.currentIndex);
-            } :null
+          builder: (context, snapshot) => Consumer<SearchSongState>(
+            builder: (_, nextSong, __) => IconButton(
+                icon: Icon(Icons.skip_next, color: AppTheme.backgroundColor),
+                onPressed: player.hasNext
+                    ? () {
+                        player.seekToNext();
+                        print(player.currentIndex);
+                      }
+                    : () {
+                        nextSong.getAudio(nextSong.listSong1,
+                            nextSong.currentIndexPlaying + 1);
+                      }),
           ),
         ),
         StreamBuilder<double>(

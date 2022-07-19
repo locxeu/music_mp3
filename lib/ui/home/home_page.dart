@@ -1,13 +1,11 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:music_mp3_app/ui/home/home_screen.dart';
 import 'package:music_mp3_app/ui/library/lib_page.dart';
 import 'package:music_mp3_app/ui/local/local_page.dart';
 import 'package:music_mp3_app/ui/search/search_page.dart';
 import 'package:music_mp3_app/ui/widget/bottom_bar.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -64,12 +62,10 @@ class _HomePageState extends State<HomePage> {
         return const HomeScreen();
       // Create this function, it should return your first page as a widget
       case 1:
-        return ChangeNotifierProvider(
-            create: (context) => SearchSongState(),
-            builder: (context, child) => const SearchPage());
+        return const SearchPage();
       // Create this function, it should return your second page as a widget
       case 2:
-        return const LibraryPage(); // Create this function, it should return your third page as a widget
+        return  LibraryPage(); // Create this function, it should return your third page as a widget
       case 3:
         return const LocalPage(); // Create this function, it should return your fourth page as a widget
     }
