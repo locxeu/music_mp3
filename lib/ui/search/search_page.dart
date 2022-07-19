@@ -32,6 +32,8 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   var playListSong;
   bool isLoadedSoure = false;
   void handleString() {}
+
+  // * Funtion add song to playist source 
   Future<void> _init() async {
     log('init run');
   
@@ -88,6 +90,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     }
   }
 
+  // * Funtion get url video
   static addToPlayist(List<dynamic> song) async {
     List<AudioSource> playList = [];
     var yt = YoutubeExplode();

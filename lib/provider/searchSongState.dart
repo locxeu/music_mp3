@@ -23,13 +23,18 @@ class SearchSongState extends BaseState {
   bool isDetailSongPlaying = false;
   int currentIndexPlaying = 0;
   List<AudioSource> playList = [];
-  bool isLoadedSoure=false;
-
+  bool isLoadedSoure = false;
+  bool isFavourite = false;
   String api = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vcmVzdWx0cz9zZWFyY2hfcXVlcnk9';
   String urlBase = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20=';
   playSong() {
     isDetailSongPlaying = !isDetailSongPlaying;
     log('message');
+    notifyListeners();
+  }
+
+  addToFavourite() {
+    isFavourite = !isFavourite;
     notifyListeners();
   }
 
