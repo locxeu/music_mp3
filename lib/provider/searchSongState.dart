@@ -20,7 +20,7 @@ class SearchSongState extends BaseState {
   Map<String, dynamic> json = {};
   List<dynamic> listSong = [];
   List<dynamic> listSong1 = [];
-  bool isPlaying = false;
+  bool isDetailSongPlaying = false;
   int currentIndexPlaying = 0;
   List<AudioSource> playList = [];
   bool isLoadedSoure=false;
@@ -28,7 +28,7 @@ class SearchSongState extends BaseState {
   String api = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vcmVzdWx0cz9zZWFyY2hfcXVlcnk9';
   String urlBase = 'aHR0cHM6Ly93d3cueW91dHViZS5jb20=';
   playSong() {
-    isPlaying = !isPlaying;
+    isDetailSongPlaying = !isDetailSongPlaying;
     log('message');
     notifyListeners();
   }

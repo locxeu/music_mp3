@@ -236,11 +236,11 @@ class NetworkSongState extends State<NetworkSong>
     ));
     // _init();
     _controller = AnimationController(
-      duration: const Duration(minutes: 6),
+      duration: const Duration(minutes : 5),
       vsync: this,
     );
     if (mounted) {
-      _controller.forward();
+      _controller.repeat();
     }
     IsolateNameServer.registerPortWithName(
         receivePort.sendPort, 'downloadingVideo');

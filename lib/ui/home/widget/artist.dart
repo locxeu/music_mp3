@@ -14,13 +14,18 @@ class _FavouriteArtistState extends State<FavouriteArtist> {
     return SizedBox(
       height: 200,
       child: ListView(
+        //Todo: Tạo model rồi map ra item 
         scrollDirection: Axis.horizontal,
         children: [
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SearchPage(searchText: 'taylor swift',)),
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    searchText: 'taylor swift',
+                  ),
+                ),
               );
             },
             child: Container(
@@ -46,24 +51,36 @@ class _FavouriteArtistState extends State<FavouriteArtist> {
               ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              children: const [
-                CircleAvatar(
-                  backgroundImage:
-                      AssetImage('assets/images/favorite_artist/chillies.jpg'),
-                  radius: 80,
+          GestureDetector(
+            onTap: (){
+                   Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SearchPage(
+                    searchText: 'chillies',
+                  ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text('Chillies',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold))
-              ],
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: const [
+                  CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/images/favorite_artist/chillies.jpg'),
+                    radius: 80,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('Chillies',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold))
+                ],
+              ),
             ),
           ),
           Container(

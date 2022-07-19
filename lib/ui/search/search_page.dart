@@ -34,7 +34,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   void handleString() {}
   Future<void> _init() async {
     log('init run');
-
+  
     if (playListSong != null) {
       log('playListSong $playListSong');
       _playlist = ConcatenatingAudioSource(
@@ -125,7 +125,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
     super.initState();
     ambiguate(WidgetsBinding.instance)!.addObserver(this);
     WidgetsBinding.instance!.addPostFrameCallback((_) => {
-          if (widget.searchText != null && !Instances.player.playing)
+          if (widget.searchText != null)
             {
               context
                   .read<SearchSongState>()
@@ -139,6 +139,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
 
     if (!Instances.player.playing) {
       log('alo alo');
+      context.read<SearchSongState>().listSong1.clear();
       _init();
     }
   }
@@ -165,9 +166,9 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
         ),
         child: Consumer<SearchSongState>(builder: (_, searchState, __) {
           log('searchState.playList ${searchState.playList}');
-          log('searchState.playList ${searchState.isPlaying}');
+          log('searchState.playList ${searchState.isDetailSongPlaying}');
 
-          return searchState.isPlaying
+          return searchState.isDetailSongPlaying
               ? NetworkSong(
                   listAudio: searchState.playList,
                 )
@@ -179,10 +180,12 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                     widget.searchText == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 10,),
                             child: Align(
                               alignment: Alignment.center,
-                              child: Row(children: [
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
                                 IconButton(
                                   icon: const Icon(
                                     Icons.arrow_back,
@@ -249,7 +252,6 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                               ),
                             ),
                           ),
-                    //  Text(searchState.listSong.length.toString())
                     Expanded(
                       child: StreamBuilder<SequenceState?>(
                           stream: Instances.player.sequenceStateStream,
@@ -260,77 +262,69 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            return Container(
-                              // color: Colors.blue,
-                              child: ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: searchState.listSong1.length,
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                      onTap: () async {
-                                        searchState.playSong();
-                                        searchState.getCurrentIndex(index);
-                                        //! Khi load xong source bài check để chuyển sang bài mới luôn
-                                        if (searchState.isLoadedSoure) {
-                                          await Instances.player.seek(
-                                            Duration.zero,
-                                            index: index,
-                                          );
-                                          await Instances.player.play();
-                                          return;
-                                        }
-                                        await searchState.getAudio(
-                                          searchState.listSong1,
-                                          index,
+                            return ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: searchState.listSong1.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    onTap: () async {
+                                      searchState.playSong();
+                                      searchState.getCurrentIndex(index);
+                                      //! Khi load xong source bài check để chuyển sang bài mới luôn
+                                      if (searchState.isLoadedSoure) {
+                                        await Instances.player.seek(
+                                          Duration.zero,
+                                          index: index,
                                         );
-                                        // playListSong=await testaudio( searchState.listSong1,);
-                                        playListSong = await compute(
-                                          addToPlayist,
-                                          searchState.listSong1,
-                                        );
-                                        searchState.playList = playListSong;
-                                        await _init();
-                                        if (mounted) {
-                                          setState(() {
-                                            searchState.isLoadedSoure = true;
-                                            log('đã load xong source');
-                                          });
-                                        }
-                                      },
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: ListTile(
-                                          tileColor: index == state.currentIndex
-                                              ? Colors.grey.shade800
-                                              : null,
-                                          leading: CircleAvatar(
-                                            radius: 50,
-                                            backgroundImage: NetworkImage(
-                                              searchState.listSong1[index]
-                                                  ['thumbnail'],
-                                            ),
-                                          ),
-                                          title: SizedBox(
-                                            width: context.width * 0.7,
-                                            child: Text(
-                                              searchState.listSong1[index]
-                                                  ['title'],
-                                              style: AppTheme.headLine2,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                          subtitle: Text(
+                                        await Instances.player.play();
+                                        return;
+                                      }
+                                      await searchState.getAudio(
+                                        searchState.listSong1,
+                                        index,
+                                      );
+                                      // playListSong=await testaudio( searchState.listSong1,);
+                                      playListSong = await compute(
+                                        addToPlayist,
+                                        searchState.listSong1,
+                                      );
+                                      searchState.playList = playListSong;
+                                      await _init();
+                                          searchState.isLoadedSoure = true;
+                                          log('đã load xong source');
+                                    },
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: ListTile(
+                                        tileColor: index == state.currentIndex
+                                            ? Colors.grey.shade800
+                                            : null,
+                                        leading: CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage: NetworkImage(
                                             searchState.listSong1[index]
-                                                ['duration'],
-                                            style: AppTheme.headLine5,
+                                                ['thumbnail'],
                                           ),
-                                          // trailing: Icon(Icons.h_plus_mobiledata),
+                                        ),
+                                        title: SizedBox(
+                                          width: context.width * 0.7,
+                                          child: Text(
+                                            searchState.listSong1[index]
+                                                ['title'],
+                                            style: AppTheme.headLine2,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          searchState.listSong1[index]
+                                              ['duration'],
+                                          style: AppTheme.headLine5,
                                         ),
                                       ),
-                                    );
-                                  }),
-                            );
+                                    ),
+                                  );
+                                });
                           }),
                     ),
                   ],
