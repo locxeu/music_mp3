@@ -4,7 +4,7 @@ import 'package:music_mp3_app/model/playlist_model.dart';
 import 'package:music_mp3_app/ui/library/widget/create_playlist_modal.dart';
 
 import '../../config/theme/app_theme.dart';
-import '../playlist/playlistScreen.dart';
+import '../playlist/favourite_song_screen.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({Key? key}) : super(key: key);

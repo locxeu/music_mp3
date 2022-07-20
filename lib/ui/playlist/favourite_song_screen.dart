@@ -69,61 +69,58 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
                       physics: const BouncingScrollPhysics(),
                       itemCount: favour.length,
                       itemBuilder: (context, index) {
-                        return Container(
-                          // color: Colors.blue,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              children: [
-                                Row(children: [
-                                  SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(6.0),
-                                      child: Image.network(
-                                        favour[index].thumbnail!,
-                                        fit: BoxFit.fitHeight,
-                                      ),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Column(
+                            children: [
+                              Row(children: [
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    child: Image.network(
+                                      favour[index].thumbnail!,
+                                      fit: BoxFit.fitHeight,
                                     ),
                                   ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            favour[index].title!,
-                                            style: AppTheme.headLine7,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            favour[index].duration??'00:00',
-                                            style: AppTheme.headLine6,
-                                            overflow: TextOverflow.ellipsis,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.more_vert,
-                                    color: AppTheme.backgroundColor,
-                                    size: 20,
-                                  )
-                                ]),
-                                Divider(
-                                  thickness: 0.5,
-                                  color: Colors.grey.shade500,
-                                  indent: 65,
                                 ),
-                              ],
-                            ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          favour[index].title!,
+                                          style: AppTheme.headLine7,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          favour[index].duration ?? '00:00',
+                                          style: AppTheme.headLine6,
+                                          overflow: TextOverflow.ellipsis,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.more_vert,
+                                  color: AppTheme.backgroundColor,
+                                  size: 20,
+                                )
+                              ]),
+                              Divider(
+                                thickness: 0.5,
+                                color: Colors.grey.shade500,
+                                indent: 65,
+                              ),
+                            ],
                           ),
                         );
                       },
@@ -133,7 +130,6 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
               ),
             ],
           )),
-
     );
   }
 }

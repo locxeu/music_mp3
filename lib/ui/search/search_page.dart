@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:music_mp3_app/common.dart';
@@ -33,10 +34,10 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
   bool isLoadedSoure = false;
   void handleString() {}
 
-  // * Funtion add song to playist source 
+  // * Funtion add song to playist source
   Future<void> _init() async {
     log('init run');
-  
+
     if (playListSong != null) {
       log('playListSong $playListSong');
       _playlist = ConcatenatingAudioSource(
@@ -134,8 +135,7 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                   .read<SearchSongState>()
                   .queryYoutubeApi(widget.searchText.toString(), context),
               setState(() {
-                 context
-                  .read<SearchSongState>().isLoadedSoure = false;
+                context.read<SearchSongState>().isLoadedSoure = false;
               })
             }
         });
@@ -183,30 +183,32 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                     widget.searchText == null
                         ? const SizedBox.shrink()
                         : Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10,),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
                             child: Align(
                               alignment: Alignment.center,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    searchState.listSong1.clear();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                Text(
-                                  widget.searchText!.toUpperCase(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
-                                  ),
-                                )
-                              ]),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        searchState.listSong1.clear();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    Text(
+                                      widget.searchText!.toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 17,
+                                      ),
+                                    )
+                                  ]),
                             ),
                           ),
                     widget.searchText != null
@@ -294,36 +296,132 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                       );
                                       searchState.playList = playListSong;
                                       await _init();
-                                          searchState.isLoadedSoure = true;
-                                          log('đã load xong source');
+                                      searchState.isLoadedSoure = true;
+                                      log('đã load xong source');
                                     },
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: ListTile(
-                                        tileColor: index == state.currentIndex
-                                            ? Colors.grey.shade800
-                                            : null,
-                                        leading: CircleAvatar(
-                                          radius: 50,
-                                          backgroundImage: NetworkImage(
-                                            searchState.listSong1[index]
-                                                ['thumbnail'],
+                                    child: Slidable(
+                                      endActionPane: ActionPane(
+                                        children: [
+                                          SlidableAction(
+                                            onPressed: (context) {},
+                                            icon: Icons.queue_music,
+                                            backgroundColor: Colors.blueAccent,
+                                          ),
+                                          SlidableAction(
+                                            onPressed: (context) {},
+                                            icon: Icons.share_rounded,
+                                            backgroundColor:
+                                                const Color(0xFF0caec7),
+                                          )
+                                        ],
+                                        motion: const StretchMotion(),
+                                      ),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                color:
+                                                    index == state.currentIndex
+                                                        ? Colors.grey.shade900
+                                                        : null,
+                                                child: Row(children: [
+                                                  SizedBox(
+                                                    width: 50,
+                                                    height: 50,
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6.0),
+                                                      child: Image.network(
+                                                        searchState.listSong1[
+                                                            index]['thumbnail'],
+                                                        fit: BoxFit.fitHeight,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 10),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            searchState
+                                                                    .listSong1[
+                                                                index]['title'],
+                                                            style: AppTheme
+                                                                .headLine7,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          Text(
+                                                            searchState.listSong1[
+                                                                    index]
+                                                                ['duration'],
+                                                            style: AppTheme
+                                                                .headLine6,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.more_vert,
+                                                    color: AppTheme
+                                                        .backgroundColor,
+                                                    size: 20,
+                                                  )
+                                                ]),
+                                              ),
+                                              Divider(
+                                                thickness: 0.5,
+                                                color: Colors.grey.shade500,
+                                                indent: 65,
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        title: SizedBox(
-                                          width: context.width * 0.7,
-                                          child: Text(
-                                            searchState.listSong1[index]
-                                                ['title'],
-                                            style: AppTheme.headLine2,
-                                            maxLines: 1,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          searchState.listSong1[index]
-                                              ['duration'],
-                                          style: AppTheme.headLine5,
-                                        ),
+                                        //  ListTile(
+                                        //   tileColor: index == state.currentIndex
+                                        //       ? Colors.grey.shade800
+                                        //       : null,
+                                        //   leading: CircleAvatar(
+                                        //     radius: 50,
+                                        //     backgroundImage: NetworkImage(
+                                        //       searchState.listSong1[index]
+                                        //           ['thumbnail'],
+                                        //     ),
+                                        //   ),
+                                        //   title: SizedBox(
+                                        //     width: context.width * 0.7,
+                                        //     child: Text(
+                                        //       searchState.listSong1[index]
+                                        //           ['title'],
+                                        //       style: AppTheme.headLine2,
+                                        //       maxLines: 1,
+                                        //     ),
+                                        //   ),
+                                        //   subtitle: Text(
+                                        //     searchState.listSong1[index]
+                                        //         ['duration'],
+                                        //     style: AppTheme.headLine5,
+                                        //   ),
+                                        // ),
                                       ),
                                     ),
                                   );

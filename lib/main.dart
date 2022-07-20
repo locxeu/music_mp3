@@ -49,6 +49,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const SplashScreen()
+      //Todo: ADD SLEEP TIMER 
+      //Todo: SIDBLE LIST
+      
     );
   }
 }
