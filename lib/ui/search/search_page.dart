@@ -15,6 +15,7 @@ import 'package:music_mp3_app/networkSong.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -308,7 +309,11 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                             backgroundColor: Colors.blueAccent,
                                           ),
                                           SlidableAction(
-                                            onPressed: (context) {},
+                                            onPressed: (context) async{
+                                               String youtubeLink ='https://www.youtube.com/watch?v=';
+                                              log(searchState.listSong1[index]['id']);
+                                              await Share.share('Hello ${youtubeLink+searchState.listSong1[index]['id']}');
+                                            },
                                             icon: Icons.share_rounded,
                                             backgroundColor:
                                                 const Color(0xFF0caec7),
