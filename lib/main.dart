@@ -7,13 +7,17 @@ import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:music_mp3_app/ui/splash_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'model/playlist_model.dart';
+
 
 Future<void> main()async {
    WidgetsFlutterBinding.ensureInitialized();
    FlutterDownloader.initialize();
    await Hive.initFlutter();
    Hive.registerAdapter(YoutubeSongAdapter());
+   Hive.registerAdapter(PlaylistAdapter());
    await Hive.openBox<YoutubeSong>('favourite_song');
+   await Hive.openBox<Playlist>('playlist');
    await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
