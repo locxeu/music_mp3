@@ -77,16 +77,16 @@ class SearchSongState extends BaseState {
     return playList;
   }
 
-  Future<void> getAudio(List<dynamic> song, int index) async {
+  Future<void> getAudio(List<dynamic> song, int index,bool isPlayList) async {
     log('index hiện tại là $index');
     var yt = YoutubeExplode();
     getCurrentIndex(index);
     log('$index id  ${song[index]['id']}');
     var streamInfo =
-        await yt.videos.streamsClient.getManifest(song[index]['id']);
+        await yt.videos.streamsClient.getManifest(isPlayList?song[index].id:song[index]['id']);
     if (streamInfo.audioOnly.isNotEmpty) {
       StreamInfo streamInfo1 = streamInfo.audioOnly.withHighestBitrate();
-      print('$index ${streamInfo1.url}');
+      // print('$index ${streamInfo1.url}');
       playList.clear();
       playList.add(AudioSource.uri(streamInfo1.url,
           tag: MediaItem(

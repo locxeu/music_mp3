@@ -13,6 +13,7 @@ import 'package:music_mp3_app/extension/extension.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/networkSong.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
+import 'package:music_mp3_app/ui/search/widget/show_playist.dart';
 import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -304,15 +305,26 @@ class _SearchPageState extends State<SearchPage> with WidgetsBindingObserver {
                                       endActionPane: ActionPane(
                                         children: [
                                           SlidableAction(
-                                            onPressed: (context) {},
+                                            onPressed: (context) {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return ShowPlaylist(
+                                                      index: index
+                                                    );
+                                                  });
+                                            },
                                             icon: Icons.queue_music,
                                             backgroundColor: Colors.blueAccent,
                                           ),
                                           SlidableAction(
-                                            onPressed: (context) async{
-                                               String youtubeLink ='https://www.youtube.com/watch?v=';
-                                              log(searchState.listSong1[index]['id']);
-                                              await Share.share('Hello ${youtubeLink+searchState.listSong1[index]['id']}');
+                                            onPressed: (context) async {
+                                              String youtubeLink =
+                                                  'https://www.youtube.com/watch?v=';
+                                              log(searchState.listSong1[index]
+                                                  ['id']);
+                                              await Share.share(
+                                                  'Hello ${youtubeLink + searchState.listSong1[index]['id']}');
                                             },
                                             icon: Icons.share_rounded,
                                             backgroundColor:

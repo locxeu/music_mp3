@@ -51,7 +51,9 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen()
       //Todo: ADD SLEEP TIMER 
       //Todo: SIDBLE LIST
-      
+      //Todo: Fix Local Song 
+      //Todo: Download
+    
     );
   }
 }

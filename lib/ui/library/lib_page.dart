@@ -5,6 +5,7 @@ import 'package:music_mp3_app/ui/library/widget/create_playlist_modal.dart';
 
 import '../../config/theme/app_theme.dart';
 import '../playlist/favourite_song_screen.dart';
+import '../playlist/playlist_creen.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({Key? key}) : super(key: key);
@@ -66,7 +67,7 @@ class _LibraryPageState extends State<LibraryPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const PlaylistScreen()),
+                        builder: (context) => const FavouritelistScreen()),
                   );
                 },
                 child: ListTile(
@@ -100,23 +101,36 @@ class _LibraryPageState extends State<LibraryPage> {
                       padding: EdgeInsets.zero,
                       itemCount: playlist.length,
                       itemBuilder: ((context, index) {
-                        return ListTile(
-                          leading: Image.asset(
-                            'assets/images/favorite_song.png',
-                          ),
-                          title:  Text(
-                           playlist[index].name,
-                            style: const TextStyle(
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PlaylistScreen(
+                                        title: playlist[index].name,
+                                        playlistSong: playlist[index].song,
+                                      )),
+                            );
+                          },
+                          child: ListTile(
+                            leading: Image.asset(
+                              'assets/images/favorite_song.png',
+                            ),
+                            title: Text(
+                              playlist[index].name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            subtitle: Text(
+                              playlist[index].song.length.toString() +
+                                  ' bài hát',
+                              style: AppTheme.headLine6,
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
                               color: Colors.white,
                             ),
-                          ),
-                          subtitle: Text(
-                             playlist[index].song.length.toString()+' bài hát',
-                            style: AppTheme.headLine6,
-                          ),
-                          trailing: const Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white,
                           ),
                         );
                       }),
@@ -138,7 +152,9 @@ class _LibraryPageState extends State<LibraryPage> {
           borderRadius: BorderRadius.circular(14.0),
         ),
         builder: (context) {
-          return  CreatePlaylistModal(playlist: playlist,);
+          return CreatePlaylistModal(
+            playlist: playlist,
+          );
         });
   }
 }

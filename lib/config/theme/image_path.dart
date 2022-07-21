@@ -21,6 +21,7 @@ class Images {
 //Show dialog
   static const String timer = 'assets/images/timer-icon.png';
   static const String error = 'assets/images/cancel.png';
+  static const String playlist = 'assets/images/playlist.png';
 
   static final Images _instance = Images._internal();
 
