@@ -51,6 +51,16 @@ class AppTheme {
     fontSize: 20,
     color: Colors.white70
   );
+     static TextStyle headLine6 = GoogleFonts.roboto(
+    fontWeight: FontWeight.w400,
+    fontSize: 15,
+    color: Colors.white70
+  );
+       static TextStyle headLine7 = GoogleFonts.roboto(
+    fontWeight: FontWeight.w400,
+    fontSize: 15,
+    color: Colors.white
+  );
 
 
   ///Singleton factory

@@ -3,28 +3,27 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:audio_session/audio_session.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:marquee/marquee.dart';
 import 'package:music_mp3_app/common.dart';
 import 'package:music_mp3_app/config/theme/app_theme.dart';
-import 'package:music_mp3_app/config/theme/image_path.dart';
 import 'package:music_mp3_app/controlButton.dart';
+import 'package:music_mp3_app/extension/toast.dart';
 import 'package:music_mp3_app/instance/instance.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
-import 'package:music_mp3_app/ui/widget/custom_dialog.dart';
 import 'package:music_mp3_app/ui/widget/header_detail_playing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'extension/extension.dart';
+import 'model/song_model.dart';
 
 class NetworkSong extends StatefulWidget {
   final List<AudioSource> listAudio;
@@ -38,9 +37,10 @@ class NetworkSongState extends State<NetworkSong>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   var _playlist;
   late AnimationController _controller;
-  final int _addedCount = 0;
   int progress = 0;
   final Dio dio = Dio();
+  late Box<YoutubeSong> favouriteSong;
+
   void setTimer() {
     showDialog(
         context: context,
@@ -106,42 +106,6 @@ class NetworkSongState extends State<NetworkSong>
             ),
           );
         });
-  }
-
-  Future<void> _init() async {
-    log('init run');
-    _playlist = ConcatenatingAudioSource(
-      children: [
-        for (var i = 0; i < widget.listAudio.length; i++) widget.listAudio[i]
-      ],
-    );
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.speech());
-    // Listen to errors during playback.
-    Instances.player.playbackEventStream.listen((event) {},
-        onError: (Object e, StackTrace stackTrace) {
-      print('A stream error occurred: $e');
-    });
-    try {
-      // Preloading audio is not currently supported on Linux.
-      await Instances.player.setAudioSource(_playlist,
-          initialIndex: context.read<SearchSongState>().currentIndexPlaying,
-          preload: kIsWeb || defaultTargetPlatform != TargetPlatform.linux);
-      // await  Instances.player.seek(Duration.zero,index:context.read<SearchSongState>().currentIndexPlaying);
-      Instances.player.play();
-    } catch (e) {
-      // Catch load errors: 404, invalid url...
-      log("Error123 loading audio source: $e");
-      showDialog(
-          context: context,
-          builder: (context) {
-            return CustomDialogBox(
-                title: 'Sorry',
-                descriptions: 'Error123 loading audio source: $e'.toString(),
-                text: 'OK',
-                imageFile: Images.error);
-          });
-    }
   }
 
   void _downloadAudio() async {
@@ -231,12 +195,13 @@ class NetworkSongState extends State<NetworkSong>
     super.initState();
     // ambiguate(WidgetsBinding.instance)!.addObserver(this);
     // Instances.player = Instances.player;
+    favouriteSong = Hive.box('favourite_song');
+    print('favouriteSong ${favouriteSong.length}');
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.black,
     ));
-    // _init();
     _controller = AnimationController(
-      duration: const Duration(minutes : 5),
+      duration: const Duration(minutes: 5),
       vsync: this,
     );
     if (mounted) {
@@ -288,7 +253,7 @@ class NetworkSongState extends State<NetworkSong>
     return Consumer<SearchSongState>(builder: (_, networkSong, __) {
       print(Instances.player.playerState);
       print(Instances.player.playing);
-
+      print('rebuild');
       return Material(
         child: Container(
           decoration: const BoxDecoration(
@@ -415,34 +380,49 @@ class NetworkSongState extends State<NetworkSong>
                               (cycleModes.indexOf(loopMode) + 1) %
                                   cycleModes.length]);
                           if (index == 1) {
-                            Fluttertoast.showToast(
-                                msg: "Lặp lại bài hát",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor:
-                                    Colors.grey.shade700.withOpacity(0.8),
-                                textColor: Colors.white,
-                                fontSize: 16.0);
+                            ToastMessage.toastMessage("Lặp lại bài hát");
                           }
-                          if(index==0){
-                                 Fluttertoast.showToast(
-                                msg: "Lặp lại playlist",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor:
-                                    Colors.grey.shade700.withOpacity(0.8),
-                                textColor: Colors.white,
-                                fontSize: 16.0);
+                          if (index == 0) {
+                            ToastMessage.toastMessage("Lặp lại playlist");
                           }
                         },
                       );
                     },
                   ),
                   IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.favorite_border,
-                        color: Colors.grey,
+                      onPressed: () {
+                        networkSong.addToFavourite();
+                        if (!networkSong.isFavourite) {
+                          favouriteSong.put(
+                            networkSong
+                                    .listSong1[Instances.player.currentIndex!]
+                                ['id'],
+                            YoutubeSong(
+                              id: networkSong
+                                      .listSong1[Instances.player.currentIndex!]
+                                  ['id'],
+                              title: networkSong
+                                      .listSong1[Instances.player.currentIndex!]
+                                  ['title'],
+                              thumbnail: networkSong
+                                      .listSong1[Instances.player.currentIndex!]
+                                  ['thumbnail'],
+                              duration: networkSong
+                                      .listSong1[Instances.player.currentIndex!]
+                                  ['duration'],
+                            ),
+                          );
+                          ToastMessage.toastMessage(
+                              "Đã thêm bài hát vào mục yêu thích");
+                          return;
+                        }
+                        favouriteSong.delete(networkSong
+                            .listSong1[Instances.player.currentIndex!]['id']);
+                      },
+                      icon: Icon(
+                        Icons.favorite_sharp,
+                        color:
+                            networkSong.isFavourite ? Colors.grey : Colors.red,
                       )),
                   IconButton(
                       onPressed: _downloadAudio,

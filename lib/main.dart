@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:music_mp3_app/model/song_model.dart';
 import 'package:music_mp3_app/provider/searchSongState.dart';
 import 'package:music_mp3_app/ui/splash_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'model/playlist_model.dart';
+
 
 Future<void> main()async {
    WidgetsFlutterBinding.ensureInitialized();
-   await FlutterDownloader.initialize();
+   FlutterDownloader.initialize();
+   await Hive.initFlutter();
+   Hive.registerAdapter(YoutubeSongAdapter());
+   Hive.registerAdapter(PlaylistAdapter());
+   await Hive.openBox<YoutubeSong>('favourite_song');
+   await Hive.openBox<Playlist>('playlist');
    await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
@@ -40,6 +49,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const SplashScreen()
+      //Todo: ADD SLEEP TIMER 
+      //Todo: SIDBLE LIST
+      //Todo: Fix Local Song 
+      //Todo: Download
+    
     );
   }
 }
